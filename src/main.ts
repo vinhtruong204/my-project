@@ -66,7 +66,8 @@ setEngine(engine);
       button.setSize(100, 100);
 
       button.onPress.connect(() => {
-        console.log("Open the box!")
+        console.log("Open the box!");
+        button.defaultView = "logo.svg";
       });
 
       // Add the button to the container
