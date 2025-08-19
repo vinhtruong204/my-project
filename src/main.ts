@@ -8,7 +8,7 @@ import { CreationEngine } from "./engine/engine";
  * Importing these modules will automatically register there plugins with the engine.
  */
 import "@pixi/sound";
-import { FancyButton } from "@pixi/ui";
+import { Button } from "./app/ui/Button";
 // import "@esotericsoftware/spine-pixi-v8";
 
 // Create a new creation engine instance
@@ -38,26 +38,45 @@ setEngine(engine);
       height: '80%',
       justifyContent: 'center',
       flexDirection: 'row',
-      alignContent: 'center',
+      alignContent: 'space-evenly',
       flexWrap: 'wrap',
-      gap: 15
+      gap: 4
     },
   });
 
-  engine.stage.addChild(container);
-
-  // Create five buttons
-  for (let i = 0; i < 5; i++) {
-    const button = new FancyButton({
-      text: "",
-      defaultView: "icon-pause.png",
-      anchor: 0.5,
+  for (let j = 0; j < 5; j++) {
+    const innerContainer = new Container({
+      layout: {
+        width: '80%',
+        height: '5%',
+        justifyContent: 'center',
+        flexDirection: 'row',
+        alignContent: 'center',
+        flexWrap: 'wrap',
+      },
     });
 
-    button.position = { x: i * (button.width * 4), y: 0 };
-    button.setSize(100, 50)
+    // Create five buttons
+    for (let i = 0; i < 5; i++) {
+      const button = new Button({
+        text: "",
+      });
 
-    // Add the button to the container
-    container.addChild(button);
+      button.position = { x: i * button.width, y: 0 };
+      button.setSize(100, 100);
+
+      button.onPress.connect(() => {
+        console.log("Open the box!")
+      });
+
+      // Add the button to the container
+      innerContainer.addChild(button);
+      innerContainer.position.set(0, j * button.height);
+    }
+
+    container.addChild(innerContainer);
   }
+
+  engine.stage.addChild(container);
+
 })();
