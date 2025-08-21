@@ -6,8 +6,8 @@
             "inheritedMetaData": {},
             "transformData": {},
             "stats": {
-                "date": 1755685366714,
-                "duration": 4.418999999994412,
+                "date": 1755761462196,
+                "duration": 0.6558000000659376,
                 "success": true
             }
         },
@@ -575,8 +575,8 @@
             "inheritedMetaData": {},
             "transformData": {},
             "stats": {
-                "date": 1755685366714,
-                "duration": 4.362099999998463,
+                "date": 1755761462196,
+                "duration": 0.6233999999240041,
                 "success": true
             }
         },
@@ -904,11 +904,11 @@
             },
             "transformData": {},
             "stats": {
-                "date": 1755675951182,
-                "duration": 57.20920000015758,
+                "date": 1755760451389,
+                "duration": 16.977199999964796,
                 "success": true
             },
-            "hash": "GchqEw"
+            "hash": "YEfI7g"
         },
         ".assetpack/mipmap/preload{m}/input_field.png": {
             "isFolder": false,
@@ -1018,6 +1018,111 @@
         "D:/Work/my-project/public/assets/preload/logo.svg": {
             "isFolder": false,
             "transformParent": "D:/Work/my-project/raw-assets/preload{m}/logo.svg",
+            "metaData": {},
+            "inheritedMetaData": {
+                "m": true
+            },
+            "transformData": {}
+        },
+        "D:/Work/my-project/raw-assets/preload{m}/select.png": {
+            "isFolder": false,
+            "parent": "D:/Work/my-project/raw-assets/preload{m}",
+            "metaData": {},
+            "inheritedMetaData": {
+                "m": true
+            },
+            "transformData": {},
+            "stats": {
+                "date": 1755761462196,
+                "duration": 13.147700000088662,
+                "success": true
+            },
+            "hash": "1Ar1FQ"
+        },
+        ".assetpack/mipmap/preload{m}/select.png": {
+            "isFolder": false,
+            "transformParent": "D:/Work/my-project/raw-assets/preload{m}/select.png",
+            "metaData": {},
+            "inheritedMetaData": {
+                "m": true
+            },
+            "transformData": {}
+        },
+        ".assetpack/compress/preload{m}/select.png": {
+            "isFolder": false,
+            "transformParent": ".assetpack/mipmap/preload{m}/select.png",
+            "metaData": {},
+            "inheritedMetaData": {
+                "m": true
+            },
+            "transformData": {}
+        },
+        "D:/Work/my-project/public/assets/preload/select.png": {
+            "isFolder": false,
+            "transformParent": ".assetpack/compress/preload{m}/select.png",
+            "metaData": {},
+            "inheritedMetaData": {
+                "m": true
+            },
+            "transformData": {}
+        },
+        ".assetpack/compress/preload{m}/select.webp": {
+            "isFolder": false,
+            "transformParent": ".assetpack/mipmap/preload{m}/select.png",
+            "metaData": {},
+            "inheritedMetaData": {
+                "m": true
+            },
+            "transformData": {}
+        },
+        "D:/Work/my-project/public/assets/preload/select.webp": {
+            "isFolder": false,
+            "transformParent": ".assetpack/compress/preload{m}/select.webp",
+            "metaData": {},
+            "inheritedMetaData": {
+                "m": true
+            },
+            "transformData": {}
+        },
+        ".assetpack/mipmap/preload{m}/select@0.5x.png": {
+            "isFolder": false,
+            "transformParent": "D:/Work/my-project/raw-assets/preload{m}/select.png",
+            "metaData": {},
+            "inheritedMetaData": {
+                "m": true
+            },
+            "transformData": {}
+        },
+        ".assetpack/compress/preload{m}/select@0.5x.png": {
+            "isFolder": false,
+            "transformParent": ".assetpack/mipmap/preload{m}/select@0.5x.png",
+            "metaData": {},
+            "inheritedMetaData": {
+                "m": true
+            },
+            "transformData": {}
+        },
+        "D:/Work/my-project/public/assets/preload/select@0.5x.png": {
+            "isFolder": false,
+            "transformParent": ".assetpack/compress/preload{m}/select@0.5x.png",
+            "metaData": {},
+            "inheritedMetaData": {
+                "m": true
+            },
+            "transformData": {}
+        },
+        ".assetpack/compress/preload{m}/select@0.5x.webp": {
+            "isFolder": false,
+            "transformParent": ".assetpack/mipmap/preload{m}/select@0.5x.png",
+            "metaData": {},
+            "inheritedMetaData": {
+                "m": true
+            },
+            "transformData": {}
+        },
+        "D:/Work/my-project/public/assets/preload/select@0.5x.webp": {
+            "isFolder": false,
+            "transformParent": ".assetpack/compress/preload{m}/select@0.5x.webp",
             "metaData": {},
             "inheritedMetaData": {
                 "m": true

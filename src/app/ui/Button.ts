@@ -24,7 +24,25 @@ export class Button extends FancyButton {
   set pressed(value: boolean) {
     this._pressed = value;
     if (value) {
-      this.animations = {}
+      this.animations = {};
+    }
+    else {
+      this.animations = {
+        hover: {
+          props: {
+            scale: { x: 1.03, y: 1.03 },
+            y: 0,
+          },
+          duration: 100,
+        },
+        pressed: {
+          props: {
+            scale: { x: 0.97, y: 0.97 },
+            y: 10,
+          },
+          duration: 100,
+        },
+      };
     }
   }
 
