@@ -22,7 +22,7 @@ export class MainScreen extends Container {
     super();
 
     this.mainContainer = new Container();
-    this.addChild(this.mainContainer);
+    // this.addChild(this.mainContainer);
 
     const buttonAnimations = {
       hover: {
@@ -46,7 +46,7 @@ export class MainScreen extends Container {
     this.pauseButton.onPress.connect(() =>
       engine().navigation.presentPopup(PausePopup),
     );
-    this.addChild(this.pauseButton);
+    // this.addChild(this.pauseButton);
 
     this.settingsButton = new FancyButton({
       defaultView: "icon-settings.png",
@@ -56,12 +56,11 @@ export class MainScreen extends Container {
     this.settingsButton.onPress.connect(() =>
       engine().navigation.presentPopup(SettingsPopup),
     );
-    this.addChild(this.settingsButton);
-
+    // this.addChild(this.settingsButton);
   }
 
   /** Prepare the screen just before showing */
-  public prepare() {}
+  public prepare() { }
 
   /** Update the screen */
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
@@ -82,7 +81,7 @@ export class MainScreen extends Container {
   }
 
   /** Fully reset */
-  public reset() {}
+  public reset() { }
 
   /** Resize the screen, fired whenever window size changes */
   public resize(width: number, height: number) {
@@ -121,12 +120,12 @@ export class MainScreen extends Container {
   }
 
   /** Hide screen with animations */
-  public async hide() {}
+  public async hide() { }
 
   /** Auto pause the app when window go out of focus */
   public blur() {
     if (!engine().navigation.currentPopup) {
-      engine().navigation.presentPopup(PausePopup);
+      // engine().navigation.presentPopup(PausePopup);
     }
   }
 }

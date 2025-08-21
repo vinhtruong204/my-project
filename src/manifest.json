@@ -91,6 +91,74 @@
       "assets": [
         {
           "alias": [
+            "preload/bomb.png",
+            "bomb.png"
+          ],
+          "src": [
+            "preload/bomb@0.5x.webp",
+            "preload/bomb@0.5x.png",
+            "preload/bomb.webp",
+            "preload/bomb.png"
+          ],
+          "data": {
+            "tags": {
+              "m": true
+            }
+          }
+        },
+        {
+          "alias": [
+            "preload/diamon.png",
+            "diamon.png"
+          ],
+          "src": [
+            "preload/diamon@0.5x.webp",
+            "preload/diamon@0.5x.png",
+            "preload/diamon.webp",
+            "preload/diamon.png"
+          ],
+          "data": {
+            "tags": {
+              "m": true
+            }
+          }
+        },
+        {
+          "alias": [
+            "preload/green_wall.jpg",
+            "green_wall.jpg"
+          ],
+          "src": [
+            "preload/green_wall@0.5x.webp",
+            "preload/green_wall@0.5x.jpg",
+            "preload/green_wall.webp",
+            "preload/green_wall.jpg"
+          ],
+          "data": {
+            "tags": {
+              "m": true
+            }
+          }
+        },
+        {
+          "alias": [
+            "preload/input_field.png",
+            "input_field.png"
+          ],
+          "src": [
+            "preload/input_field@0.5x.webp",
+            "preload/input_field@0.5x.png",
+            "preload/input_field.webp",
+            "preload/input_field.png"
+          ],
+          "data": {
+            "tags": {
+              "m": true
+            }
+          }
+        },
+        {
+          "alias": [
             "preload/logo.svg",
             "logo.svg"
           ],
