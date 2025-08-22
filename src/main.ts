@@ -146,9 +146,10 @@ setEngine(engine);
   let currBombsCount = 0;
   let diamondRemaining = 0;
 
-  betButton.onPress.connect(() => {
-    console.log('preset game finish popup');
-    // engine.navigation.presentPopup(GameFinishPopup);
+  betButton.onPress.connect(async () => {
+    // Test popup 
+    // await engine.navigation.presentPopup(GameFinishPopup);
+
     if (GameStateManager.getInstance().getState() == GameState.BETTING) return;
 
     resetButtonPressed();
@@ -203,6 +204,7 @@ setEngine(engine);
 
     selectBombs.eventMode = 'passive';
     resetButtonPressed();
+    updateProfitText(true);
   });
 
   engine.stage.addChild(inforText, profitText, withdrawButton);
@@ -265,7 +267,7 @@ setEngine(engine);
               if ((child as Button).pressed) count++;
             });
           });
-          console.log("Game over! Diamon count: " + count);
+          // console.log("Game over! Diamon count: " + count);
           // resetButtonPressed();
 
         }
@@ -299,7 +301,11 @@ setEngine(engine);
     inforText.text = `Bomb: ${bomb}   Diamond: ${diamond}`;
   }
 
-  function updateProfitText() {
+  function updateProfitText(reset: boolean = false) {
+    if (reset) {
+      profitText.text = `Total profit (1.00x): ${Number(inputBetValue.value).toFixed(2)}`;
+      return;
+    }
     // Calculate diamon count
     let diamondCollected = GlobalConfig.TOTAL_ROWS * GlobalConfig.TOTAL_COLUMNS - diamondRemaining - currBombsCount;
     let exponential = 1 + diamondCollected * 0.03;

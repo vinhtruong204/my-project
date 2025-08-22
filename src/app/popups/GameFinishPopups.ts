@@ -20,8 +20,6 @@ export class GameFinishPopup extends Container {
     constructor() {
         super();
 
-        this.zIndex = 5;
-
         this.bg = new Sprite(Texture.WHITE);
         this.bg.tint = 0x0;
         this.bg.interactive = true;
@@ -30,17 +28,8 @@ export class GameFinishPopup extends Container {
         this.panel = new Container();
         this.addChild(this.panel);
 
-        // this.panelBase = new RoundedBox({ height: 300 });
-        // this.panel.addChild(this.panelBase);
-
-        this.panelBase = new RoundedBox({
-            width: 500,
-            height: 300,
-            color: 0xffffff,
-        });
+        this.panelBase = new RoundedBox({ height: 300 });
         this.panel.addChild(this.panelBase);
-
-        this.resize(engine().renderer.width, engine().renderer.height);
 
         this.title = new Label({
             text: "Game Result",
@@ -73,9 +62,7 @@ export class GameFinishPopup extends Container {
             ];
         }
         this.bg.alpha = 0;
-        // this.panel.pivot.y = -400;
-        this.panel.pivot.set(this.panel.width / 2, this.panel.height / 2);
-
+        this.panel.pivot.y = -400;
         animate(this.bg, { alpha: 0.8 }, { duration: 0.2, ease: "linear" });
         await animate(
             this.panel.pivot,
