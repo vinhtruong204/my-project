@@ -14,6 +14,7 @@ import { GlobalConfig } from "./app/config/GlobalConfig";
 import { Input, Select } from "@pixi/ui";
 import { GameStateManager } from "./app/manage_game_states/GameStateManager";
 import { GameState } from "./app/manage_game_states/GameState";
+import { GameFinishPopup } from "./app/popups/GameFinishPopups";
 // import "@esotericsoftware/spine-pixi-v8";
 
 // Create a new creation engine instance
@@ -43,7 +44,7 @@ setEngine(engine);
   bg.scale = 1;
   engine.stage.addChild(bg);
 
-  //#region  Bet ui
+  //#region  Bet container
   // const betContainer = new Container({
   //   layout: {
   //     alignContent: 'center',
@@ -60,7 +61,7 @@ setEngine(engine);
   const inputSprite = Sprite.from('input_field.png');
 
   // Input field
-  const input = new Input({
+  const inputBetValue = new Input({
     placeholder: '2000',
     bg: inputSprite,
     textStyle: {
@@ -70,10 +71,23 @@ setEngine(engine);
     padding: [11, 11, 11, 11],
   });
 
-  input.position.set(0, betText.height * 2);
+  const MIN = 100;
+  const MAX = 10000000;
+
+  inputBetValue.value = String(MIN);
+  inputBetValue.onChange.connect((text) => {
+    let cleaned = text.replace(/\D/g, '');
+    if (cleaned) {
+      const n = Math.max(MIN, Math.min(MAX, Number(cleaned)));
+      cleaned = String(n);
+    }
+    if (cleaned !== text) inputBetValue.value = cleaned;
+  });
+
+  inputBetValue.position.set(0, betText.height * 2);
 
 
-  // Select mines
+  //#region  Select bombs
   const selectBombs = new Select({
     closedBG: `select.png`,
     openBG: "select.png",
@@ -97,8 +111,9 @@ setEngine(engine);
     },
   });
 
-  selectBombs.position.set(0, input.y + input.height * 2);
+  selectBombs.position.set(0, inputBetValue.y + inputBetValue.height * 2);
   selectBombs.zIndex = 5;
+  selectBombs.value = 0;
 
   selectBombs.onSelect.connect((value, text) => {
     console.log(`value = ${value}, text = ${text}`);
@@ -106,16 +121,17 @@ setEngine(engine);
     resetButtonPressed();
   });
 
-  // Label select mines
-  const mineLabel = new Text("Select bombs", {
+  // Label select bombs
+  const bombLabel = new Text("Select bombs", {
     fill: '0xffffff',
     fontFamily: 'Arial',
     fontSize: 32
   });
 
-  mineLabel.position.set(0, selectBombs.y - mineLabel.height);
+  bombLabel.position.set(0, selectBombs.y - bombLabel.height);
+  //#endregion
 
-  // Bet 
+  //#region  Bet button
   const betButton = new Button({
     text: 'Bet',
     width: 200,
@@ -131,6 +147,8 @@ setEngine(engine);
   let diamondRemaining = 0;
 
   betButton.onPress.connect(() => {
+    console.log('preset game finish popup');
+    // engine.navigation.presentPopup(GameFinishPopup);
     if (GameStateManager.getInstance().getState() == GameState.BETTING) return;
 
     resetButtonPressed();
@@ -141,9 +159,10 @@ setEngine(engine);
     currBombsCount = selectBombs.value + 1;
     diamondRemaining = GlobalConfig.TOTAL_ROWS * GlobalConfig.TOTAL_COLUMNS - currBombsCount;
     updateInforText(currBombsCount, diamondRemaining);
+    updateProfitText();
   });
 
-  engine.stage.addChild(betText, input, mineLabel, selectBombs, betButton);
+  engine.stage.addChild(betText, inputBetValue, bombLabel, selectBombs, betButton);
 
 
   //#endregion 
@@ -158,6 +177,14 @@ setEngine(engine);
   });
   inforText.position.set(0, betButton.y + betButton.height * 2);
 
+  // Profit text
+  const profitText = new Text('Total profit (1.00x): ', {
+    fill: '0xffffff',
+    fontFamily: 'Arial',
+    fontSize: 32
+  });
+  profitText.position.set(0, inforText.y + inforText.height * 2);
+
   // Withdraw button
   const withdrawButton = new Button({
     text: 'Withdraw',
@@ -168,7 +195,7 @@ setEngine(engine);
 
   withdrawButton.anchor.set(0, 0);
 
-  withdrawButton.position.set(0, inforText.y + inforText.height * 2);
+  withdrawButton.position.set(0, profitText.y + profitText.height * 2);
 
   withdrawButton.onPress.connect(() => {
     if (GameStateManager.getInstance().getState() == GameState.NOT_BETTING) return;
@@ -178,7 +205,7 @@ setEngine(engine);
     resetButtonPressed();
   });
 
-  engine.stage.addChild(inforText, withdrawButton);
+  engine.stage.addChild(inforText, profitText, withdrawButton);
 
 
   //#endregion
@@ -206,6 +233,7 @@ setEngine(engine);
       button.position.y = i * buttonSize;
       button.setSize(buttonSize, buttonSize);
 
+      //#region Square Button
       button.onPress.connect(() => {
         if (GameStateManager.getInstance().getState() == GameState.NOT_BETTING) return;
         if (button.pressed) return;
@@ -215,10 +243,11 @@ setEngine(engine);
         const sprite = Sprite.from("diamon.png");
         sprite.setSize(button.width, button.height);
 
-        if (GetItem.getItemType(i, j))
+        if (GetItem.getItemType(i, j)) {
           button.defaultView = sprite;
+          updateProfitText();
+        }
         else {
-
           // If item selected is bomb
           const bombSprite = Sprite.from("bomb.png");
           bombSprite.setSize(buttonSize, buttonSize);
@@ -227,7 +256,7 @@ setEngine(engine);
           // Change game state
           GameStateManager.getInstance().setState(GameState.NOT_BETTING);
 
-          // Enable select bombs
+          // Enable select bombs combo box
           selectBombs.eventMode = 'passive';
 
           let count = 0;
@@ -249,10 +278,11 @@ setEngine(engine);
     boardContainer.addChild(column);
 
   }
-  //#endregion
 
   engine.stage.addChild(boardContainer);
+  //#endregion
 
+  //#region Utils function
   function resetButtonPressed() {
     // Reset all buttons on the board to their default state
     boardContainer.children.forEach((column) => {
@@ -267,6 +297,14 @@ setEngine(engine);
 
   function updateInforText(bomb: number, diamond: number) {
     inforText.text = `Bomb: ${bomb}   Diamond: ${diamond}`;
+  }
+
+  function updateProfitText() {
+    // Calculate diamon count
+    let diamondCollected = GlobalConfig.TOTAL_ROWS * GlobalConfig.TOTAL_COLUMNS - diamondRemaining - currBombsCount;
+    let exponential = 1 + diamondCollected * 0.03;
+    let totalProfit = exponential * Number(inputBetValue.value);
+    profitText.text = `Total profit (${exponential.toFixed(2)}): ${totalProfit.toFixed(2)}`;
   }
 })();
 

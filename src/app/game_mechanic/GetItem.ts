@@ -43,8 +43,8 @@ export class GetItem {
         const cols = 5;
         const totalCells = rows * cols;
 
-        if (mines > totalCells) {
-            throw new Error("Too many mines! More than available cells.");
+        if (mines >= totalCells) {
+            throw new Error("Too many bombs! More than available cells.");
         }
 
         // Start with all diamonds (1)
