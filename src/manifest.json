@@ -204,6 +204,23 @@
               "m": true
             }
           }
+        },
+        {
+          "alias": [
+            "preload/triangle.png",
+            "triangle.png"
+          ],
+          "src": [
+            "preload/triangle@0.5x.webp",
+            "preload/triangle@0.5x.png",
+            "preload/triangle.webp",
+            "preload/triangle.png"
+          ],
+          "data": {
+            "tags": {
+              "m": true
+            }
+          }
         }
       ]
     }

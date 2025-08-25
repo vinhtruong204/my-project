@@ -6,8 +6,8 @@
             "inheritedMetaData": {},
             "transformData": {},
             "stats": {
-                "date": 1756101555382,
-                "duration": 3.026200000000017,
+                "date": 1756109700903,
+                "duration": 2.2937000000383705,
                 "success": true
             }
         },
@@ -575,8 +575,8 @@
             "inheritedMetaData": {},
             "transformData": {},
             "stats": {
-                "date": 1756101555382,
-                "duration": 3.549000000000092,
+                "date": 1756109700904,
+                "duration": 1.900400000042282,
                 "success": true
             }
         },
@@ -1228,6 +1228,111 @@
         "D:/Work/my-project/public/assets/preload/select@0.5x.webp": {
             "isFolder": false,
             "transformParent": ".assetpack/compress/preload{m}/select@0.5x.webp",
+            "metaData": {},
+            "inheritedMetaData": {
+                "m": true
+            },
+            "transformData": {}
+        },
+        "D:/Work/my-project/raw-assets/preload{m}/triangle.png": {
+            "isFolder": false,
+            "parent": "D:/Work/my-project/raw-assets/preload{m}",
+            "metaData": {},
+            "inheritedMetaData": {
+                "m": true
+            },
+            "transformData": {},
+            "stats": {
+                "date": 1756109700904,
+                "duration": 13.209399999934249,
+                "success": true
+            },
+            "hash": "hokOmA"
+        },
+        ".assetpack/mipmap/preload{m}/triangle.png": {
+            "isFolder": false,
+            "transformParent": "D:/Work/my-project/raw-assets/preload{m}/triangle.png",
+            "metaData": {},
+            "inheritedMetaData": {
+                "m": true
+            },
+            "transformData": {}
+        },
+        ".assetpack/compress/preload{m}/triangle.png": {
+            "isFolder": false,
+            "transformParent": ".assetpack/mipmap/preload{m}/triangle.png",
+            "metaData": {},
+            "inheritedMetaData": {
+                "m": true
+            },
+            "transformData": {}
+        },
+        "D:/Work/my-project/public/assets/preload/triangle.png": {
+            "isFolder": false,
+            "transformParent": ".assetpack/compress/preload{m}/triangle.png",
+            "metaData": {},
+            "inheritedMetaData": {
+                "m": true
+            },
+            "transformData": {}
+        },
+        ".assetpack/compress/preload{m}/triangle.webp": {
+            "isFolder": false,
+            "transformParent": ".assetpack/mipmap/preload{m}/triangle.png",
+            "metaData": {},
+            "inheritedMetaData": {
+                "m": true
+            },
+            "transformData": {}
+        },
+        "D:/Work/my-project/public/assets/preload/triangle.webp": {
+            "isFolder": false,
+            "transformParent": ".assetpack/compress/preload{m}/triangle.webp",
+            "metaData": {},
+            "inheritedMetaData": {
+                "m": true
+            },
+            "transformData": {}
+        },
+        ".assetpack/mipmap/preload{m}/triangle@0.5x.png": {
+            "isFolder": false,
+            "transformParent": "D:/Work/my-project/raw-assets/preload{m}/triangle.png",
+            "metaData": {},
+            "inheritedMetaData": {
+                "m": true
+            },
+            "transformData": {}
+        },
+        ".assetpack/compress/preload{m}/triangle@0.5x.png": {
+            "isFolder": false,
+            "transformParent": ".assetpack/mipmap/preload{m}/triangle@0.5x.png",
+            "metaData": {},
+            "inheritedMetaData": {
+                "m": true
+            },
+            "transformData": {}
+        },
+        "D:/Work/my-project/public/assets/preload/triangle@0.5x.png": {
+            "isFolder": false,
+            "transformParent": ".assetpack/compress/preload{m}/triangle@0.5x.png",
+            "metaData": {},
+            "inheritedMetaData": {
+                "m": true
+            },
+            "transformData": {}
+        },
+        ".assetpack/compress/preload{m}/triangle@0.5x.webp": {
+            "isFolder": false,
+            "transformParent": ".assetpack/mipmap/preload{m}/triangle@0.5x.png",
+            "metaData": {},
+            "inheritedMetaData": {
+                "m": true
+            },
+            "transformData": {}
+        },
+        "D:/Work/my-project/public/assets/preload/triangle@0.5x.webp": {
+            "isFolder": false,
+            "transformParent": ".assetpack/compress/preload{m}/triangle@0.5x.webp",
             "metaData": {},
             "inheritedMetaData": {
                 "m": true
