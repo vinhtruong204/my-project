@@ -6,8 +6,8 @@
             "inheritedMetaData": {},
             "transformData": {},
             "stats": {
-                "date": 1755761462196,
-                "duration": 0.6558000000659376,
+                "date": 1756101555382,
+                "duration": 3.026200000000017,
                 "success": true
             }
         },
@@ -575,10 +575,115 @@
             "inheritedMetaData": {},
             "transformData": {},
             "stats": {
-                "date": 1755761462196,
-                "duration": 0.6233999999240041,
+                "date": 1756101555382,
+                "duration": 3.549000000000092,
                 "success": true
             }
+        },
+        "D:/Work/my-project/raw-assets/preload{m}/bitmap.png": {
+            "isFolder": false,
+            "parent": "D:/Work/my-project/raw-assets/preload{m}",
+            "metaData": {},
+            "inheritedMetaData": {
+                "m": true
+            },
+            "transformData": {},
+            "stats": {
+                "date": 1756101555382,
+                "duration": 23.684599999999932,
+                "success": true
+            },
+            "hash": "wsVw4A"
+        },
+        ".assetpack/mipmap/preload{m}/bitmap.png": {
+            "isFolder": false,
+            "transformParent": "D:/Work/my-project/raw-assets/preload{m}/bitmap.png",
+            "metaData": {},
+            "inheritedMetaData": {
+                "m": true
+            },
+            "transformData": {}
+        },
+        ".assetpack/compress/preload{m}/bitmap.png": {
+            "isFolder": false,
+            "transformParent": ".assetpack/mipmap/preload{m}/bitmap.png",
+            "metaData": {},
+            "inheritedMetaData": {
+                "m": true
+            },
+            "transformData": {}
+        },
+        "D:/Work/my-project/public/assets/preload/bitmap.png": {
+            "isFolder": false,
+            "transformParent": ".assetpack/compress/preload{m}/bitmap.png",
+            "metaData": {},
+            "inheritedMetaData": {
+                "m": true
+            },
+            "transformData": {}
+        },
+        ".assetpack/compress/preload{m}/bitmap.webp": {
+            "isFolder": false,
+            "transformParent": ".assetpack/mipmap/preload{m}/bitmap.png",
+            "metaData": {},
+            "inheritedMetaData": {
+                "m": true
+            },
+            "transformData": {}
+        },
+        "D:/Work/my-project/public/assets/preload/bitmap.webp": {
+            "isFolder": false,
+            "transformParent": ".assetpack/compress/preload{m}/bitmap.webp",
+            "metaData": {},
+            "inheritedMetaData": {
+                "m": true
+            },
+            "transformData": {}
+        },
+        ".assetpack/mipmap/preload{m}/bitmap@0.5x.png": {
+            "isFolder": false,
+            "transformParent": "D:/Work/my-project/raw-assets/preload{m}/bitmap.png",
+            "metaData": {},
+            "inheritedMetaData": {
+                "m": true
+            },
+            "transformData": {}
+        },
+        ".assetpack/compress/preload{m}/bitmap@0.5x.png": {
+            "isFolder": false,
+            "transformParent": ".assetpack/mipmap/preload{m}/bitmap@0.5x.png",
+            "metaData": {},
+            "inheritedMetaData": {
+                "m": true
+            },
+            "transformData": {}
+        },
+        "D:/Work/my-project/public/assets/preload/bitmap@0.5x.png": {
+            "isFolder": false,
+            "transformParent": ".assetpack/compress/preload{m}/bitmap@0.5x.png",
+            "metaData": {},
+            "inheritedMetaData": {
+                "m": true
+            },
+            "transformData": {}
+        },
+        ".assetpack/compress/preload{m}/bitmap@0.5x.webp": {
+            "isFolder": false,
+            "transformParent": ".assetpack/mipmap/preload{m}/bitmap@0.5x.png",
+            "metaData": {},
+            "inheritedMetaData": {
+                "m": true
+            },
+            "transformData": {}
+        },
+        "D:/Work/my-project/public/assets/preload/bitmap@0.5x.webp": {
+            "isFolder": false,
+            "transformParent": ".assetpack/compress/preload{m}/bitmap@0.5x.webp",
+            "metaData": {},
+            "inheritedMetaData": {
+                "m": true
+            },
+            "transformData": {}
         },
         "D:/Work/my-project/raw-assets/preload{m}/bomb.png": {
             "isFolder": false,

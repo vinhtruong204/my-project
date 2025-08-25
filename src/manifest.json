@@ -91,6 +91,23 @@
       "assets": [
         {
           "alias": [
+            "preload/bitmap.png",
+            "bitmap.png"
+          ],
+          "src": [
+            "preload/bitmap@0.5x.webp",
+            "preload/bitmap@0.5x.png",
+            "preload/bitmap.webp",
+            "preload/bitmap.png"
+          ],
+          "data": {
+            "tags": {
+              "m": true
+            }
+          }
+        },
+        {
+          "alias": [
             "preload/bomb.png",
             "bomb.png"
           ],

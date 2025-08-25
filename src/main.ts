@@ -120,6 +120,7 @@ setEngine(engine);
     console.log(`value = ${value}, text = ${text}`);
     GetItem.generateMatrix(value + 1);
     resetButtonPressed();
+    updateGameResultText(true);
   });
 
   // Label select bombs
@@ -154,6 +155,8 @@ setEngine(engine);
     if (GameStateManager.getInstance().getState() == GameState.BETTING) return;
 
     resetButtonPressed();
+
+    updateGameResultText(true);
     selectBombs.eventMode = 'none';
     GameStateManager.getInstance().setState(GameState.BETTING);
 
@@ -211,8 +214,11 @@ setEngine(engine);
     revealAllButtons();
     // resetButtonPressed();
     updateProfitText(true);
+
     withdrawButton.visible = false;
     betButton.alpha = 1;
+
+    updateGameResultText();
   });
 
   engine.stage.addChild(inforText, profitText, withdrawButton);
@@ -257,8 +263,8 @@ setEngine(engine);
           button.defaultView = sprite;
           updateProfitText();
         }
+        // If item selected is bomb
         else {
-          // If item selected is bomb
           const bombSprite = Sprite.from("bomb.png");
           bombSprite.setSize(buttonSize, buttonSize);
           button.defaultView = bombSprite;
@@ -273,7 +279,6 @@ setEngine(engine);
           boardContainer.children.forEach((column) => {
             column.children.forEach((child) => {
               if ((child as Button).pressed) count++;
-              else revealAllButtons();
             });
           });
           // console.log("Game over! Diamon count: " + count);
@@ -283,7 +288,15 @@ setEngine(engine);
           // Dissapear withdraw and enable bet button
           withdrawButton.visible = false;
           betButton.alpha = 1;
+
+          // 
+          button.defaultView.tint = 'red'; // Set background color to red
+          button.pressed = true;
+
+          // Reveal all buttons after hit a bombs
+          revealAllButtons();
         }
+
         button.pressed = true;
       });
 
@@ -323,9 +336,9 @@ setEngine(engine);
 
     // Calculate diamon count
     let diamondCollected = GlobalConfig.TOTAL_ROWS * GlobalConfig.TOTAL_COLUMNS - diamondRemaining - currBombsCount;
-    let exponential = 1 + diamondCollected * 0.03;
-    let totalProfit = exponential * Number(inputBetValue.value);
-    profitText.text = `Total profit (${exponential.toFixed(2)}x): ${totalProfit.toFixed(2)}`;
+    let coefficient = 1 + diamondCollected * 0.03;
+    let totalProfit = coefficient * Number(inputBetValue.value);
+    profitText.text = `Total profit (${coefficient.toFixed(2)}x): ${totalProfit.toFixed(2)}`;
   }
 
   // Reveal all the buttons 
@@ -348,13 +361,40 @@ setEngine(engine);
         }
         button.alpha = 0.5;
 
+      });
+    });
+  }
+
+  function updateGameResultText(reset: boolean = false) {
+    boardContainer.children.forEach((column) => {
+      column.children.forEach((child) => {
+        const button = child as Button;
+        const [i, j] = [button.parent!.getChildIndex(button), boardContainer.getChildIndex(button.parent!)];
+
         // Test center button notify win
-        // if (i === 2 && j === 2) {
-        //   button.defaultView = null;
-        //   button.pivot = 0.5;
+        if (i === 2 && j === 2) {
+          if (reset) {
+            // Remove all Text children from the button when resetting
+            button.children
+              .filter(child => child instanceof Text)
+              .forEach(child => button.removeChild(child));
+            return;
+          }
 
-        // }
+          // Calculate diamon count
+          let diamondCollected = GlobalConfig.TOTAL_ROWS * GlobalConfig.TOTAL_COLUMNS - diamondRemaining - currBombsCount;
+          let coefficient = 1 + diamondCollected * 0.03;
+          let totalProfit = coefficient * Number(inputBetValue.value);
 
+          // 
+          const gameResultText = new Text();
+          gameResultText.text = `${coefficient.toFixed(2)}x: ${totalProfit.toFixed(2)}`;
+          gameResultText.setSize(buttonSize, buttonSize / 5);
+          gameResultText.anchor = 0.5;
+          gameResultText.alpha = 1;
+
+          button.addChild(gameResultText);
+        }
       });
     });
   }
