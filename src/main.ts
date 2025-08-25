@@ -1,4 +1,4 @@
-import { Color, Container, Sprite, Text } from "pixi.js";
+import { Color, Container, Graphics, Rectangle, Sprite, Text } from "pixi.js";
 import { setEngine } from "./app/getEngine";
 import { MainScreen } from "./app/screens/main/MainScreen";
 import { userSettings } from "./app/utils/userSettings";
@@ -15,6 +15,7 @@ import { Input, Select } from "@pixi/ui";
 import { GameStateManager } from "./app/manage_game_states/GameStateManager";
 import { GameState } from "./app/manage_game_states/GameState";
 import { GameFinishPopup } from "./app/popups/GameFinishPopups";
+import { RoundedBox } from "./app/ui/RoundedBox";
 // import "@esotericsoftware/spine-pixi-v8";
 
 // Create a new creation engine instance
@@ -161,6 +162,8 @@ setEngine(engine);
     diamondRemaining = GlobalConfig.TOTAL_ROWS * GlobalConfig.TOTAL_COLUMNS - currBombsCount;
     updateInforText(currBombsCount, diamondRemaining);
     updateProfitText();
+    withdrawButton.visible = true;
+    betButton.alpha = 0.5;
   });
 
   engine.stage.addChild(betText, inputBetValue, bombLabel, selectBombs, betButton);
@@ -186,13 +189,14 @@ setEngine(engine);
   });
   profitText.position.set(0, inforText.y + inforText.height * 2);
 
-  // Withdraw button
+  //#region Withdraw button
   const withdrawButton = new Button({
     text: 'Withdraw',
     width: 200,
     height: 100,
     fontSize: 32
   });
+  withdrawButton.visible = false;
 
   withdrawButton.anchor.set(0, 0);
 
@@ -203,8 +207,12 @@ setEngine(engine);
     GameStateManager.getInstance().setState(GameState.NOT_BETTING);
 
     selectBombs.eventMode = 'passive';
-    resetButtonPressed();
+
+    revealAllButtons();
+    // resetButtonPressed();
     updateProfitText(true);
+    withdrawButton.visible = false;
+    betButton.alpha = 1;
   });
 
   engine.stage.addChild(inforText, profitText, withdrawButton);
@@ -265,11 +273,16 @@ setEngine(engine);
           boardContainer.children.forEach((column) => {
             column.children.forEach((child) => {
               if ((child as Button).pressed) count++;
+              else revealAllButtons();
             });
           });
           // console.log("Game over! Diamon count: " + count);
           // resetButtonPressed();
+          updateProfitText(true);
 
+          // Dissapear withdraw and enable bet button
+          withdrawButton.visible = false;
+          betButton.alpha = 1;
         }
         button.pressed = true;
       });
@@ -293,6 +306,7 @@ setEngine(engine);
         button.defaultView = `button.png`;
         button.setSize(buttonSize, buttonSize);
         button.pressed = false;
+        button.alpha = 1;
       });
     });
   }
@@ -303,14 +317,46 @@ setEngine(engine);
 
   function updateProfitText(reset: boolean = false) {
     if (reset) {
-      profitText.text = `Total profit (1.00x): ${Number(inputBetValue.value).toFixed(2)}`;
+      profitText.text = `Total profit (0.00x): 000.00`;
       return;
     }
+
     // Calculate diamon count
     let diamondCollected = GlobalConfig.TOTAL_ROWS * GlobalConfig.TOTAL_COLUMNS - diamondRemaining - currBombsCount;
     let exponential = 1 + diamondCollected * 0.03;
     let totalProfit = exponential * Number(inputBetValue.value);
-    profitText.text = `Total profit (${exponential.toFixed(2)}): ${totalProfit.toFixed(2)}`;
+    profitText.text = `Total profit (${exponential.toFixed(2)}x): ${totalProfit.toFixed(2)}`;
+  }
+
+  // Reveal all the buttons 
+  function revealAllButtons() {
+    boardContainer.children.forEach((column) => {
+      column.children.forEach((child) => {
+        const button = child as Button;
+        if (button.pressed) return;
+
+        const [i, j] = [button.parent!.getChildIndex(button), boardContainer.getChildIndex(button.parent!)];
+        if (GetItem.getItemType(i, j)) {
+          const sprite = Sprite.from("diamon.png");
+          sprite.setSize(buttonSize, buttonSize);
+          button.defaultView = sprite;
+        }
+        else {
+          const bombSprite = Sprite.from("bomb.png");
+          bombSprite.setSize(buttonSize, buttonSize);
+          button.defaultView = bombSprite;
+        }
+        button.alpha = 0.5;
+
+        // Test center button notify win
+        // if (i === 2 && j === 2) {
+        //   button.defaultView = null;
+        //   button.pivot = 0.5;
+
+        // }
+
+      });
+    });
   }
 })();
 

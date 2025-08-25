@@ -1,4 +1,3 @@
-// GameStatesManager.ts
 import { GameState } from "./GameState";
 
 export class GameStateManager {
