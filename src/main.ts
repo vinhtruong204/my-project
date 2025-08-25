@@ -1,4 +1,4 @@
-import { Color, Container, Graphics, Rectangle, Sprite, Text } from "pixi.js";
+import { Color, Container, Sprite, Text, Triangle } from "pixi.js";
 import { setEngine } from "./app/getEngine";
 import { MainScreen } from "./app/screens/main/MainScreen";
 import { userSettings } from "./app/utils/userSettings";
@@ -14,8 +14,6 @@ import { GlobalConfig } from "./app/config/GlobalConfig";
 import { Input, Select } from "@pixi/ui";
 import { GameStateManager } from "./app/manage_game_states/GameStateManager";
 import { GameState } from "./app/manage_game_states/GameState";
-import { GameFinishPopup } from "./app/popups/GameFinishPopups";
-import { RoundedBox } from "./app/ui/RoundedBox";
 // import "@esotericsoftware/spine-pixi-v8";
 
 // Create a new creation engine instance
@@ -61,9 +59,8 @@ setEngine(engine);
 
   const inputSprite = Sprite.from('input_field.png');
 
-  // Input field
+  //#region Input field
   const inputBetValue = new Input({
-    placeholder: '2000',
     bg: inputSprite,
     textStyle: {
       fontFamily: 'Arial',
@@ -72,21 +69,116 @@ setEngine(engine);
     padding: [11, 11, 11, 11],
   });
 
-  const MIN = 100;
-  const MAX = 10000000;
+  // Handle bet value change
+  const bet_config = [0.2, 0.4, 0.6, 0.8, 1, 1.2, 1.4, 1.6, 100, 2, 4, 6, 8, 10, 12, 14, 16, 18, 20, 40, 60, 80, 100, 120, 140, 160000, 180, 200, 300, 400, 500000, 600000, 700000, 800000, 900000, 1000000];
+  var currBetIndex = 0;
+  var isMouseDown = false;
+  var isIncreaseBet = false;
+  var isDecreaseBet = false;
 
-  inputBetValue.value = String(MIN);
+  // Initial bet value
+  updateBetValueText(currBetIndex);
+
+  //#region Handle change bet value
   inputBetValue.onChange.connect((text) => {
     let cleaned = text.replace(/\D/g, '');
-    if (cleaned) {
-      const n = Math.max(MIN, Math.min(MAX, Number(cleaned)));
-      cleaned = String(n);
-    }
     if (cleaned !== text) inputBetValue.value = cleaned;
   });
 
   inputBetValue.position.set(0, betText.height * 2);
 
+  inputBetValue.interactiveChildren = true;
+
+  //#region Decrease bet value
+  // Add two triangles to inputBetValue: one pointing down, one pointing up
+  const triangleDown = Sprite.from('triangle.png');
+  triangleDown.scale.set(0.5, 0.5);
+  triangleDown.position.set(inputBetValue.width - triangleDown.width, 20);
+  triangleDown.zIndex = 10;
+  triangleDown.visible = false;
+  triangleDown.cursor = 'pointer';
+  triangleDown.interactive = true;
+  inputBetValue.addChild(triangleDown);
+
+  // Handle decrease bet value event
+  triangleDown.on('pointerdown', () => {
+    if (GameStateManager.getInstance().getState() === GameState.BETTING) return;
+
+    // TODO: Decrease bet val
+    if (currBetIndex - 1 >= 0)
+      updateBetValueText(--currBetIndex);
+
+    isMouseDown = true;
+    isDecreaseBet = true;
+    isIncreaseBet = false;
+  });
+
+  //#region Increase bet value
+  const triangleUp = Sprite.from('triangle.png');
+  triangleUp.scale.set(0.5, -0.5); // Flip vertically for up
+  triangleUp.position.set(inputBetValue.width - triangleUp.width, 17);
+  triangleUp.zIndex = 10;
+  triangleUp.visible = false;
+  triangleUp.cursor = 'pointer';
+  triangleUp.interactive = true;
+  inputBetValue.addChild(triangleUp);
+
+  triangleUp.on('pointerdown', () => {
+    if (GameStateManager.getInstance().getState() === GameState.BETTING) return;
+
+    // TODO: Increase bet val
+    if (currBetIndex + 1 < bet_config.length)
+      updateBetValueText(++currBetIndex);
+
+    isMouseDown = true;
+    isIncreaseBet = true;
+    isDecreaseBet = false;
+  });
+
+  // Handle hover event
+  inputBetValue.on('pointerenter', () => {
+    triangleUp.visible = true;
+    triangleDown.visible = true;
+  });
+
+  inputBetValue.on('pointerout', () => {
+    triangleUp.visible = false;
+    triangleDown.visible = false;
+  });
+
+  inputBetValue.on('pointerupoutside', () => {
+    triangleUp.visible = false;
+    triangleDown.visible = false;
+    isMouseDown = false;
+    isDecreaseBet = false;
+    isIncreaseBet = false;
+  });
+
+  inputBetValue.on('pointerup', () => {
+    isMouseDown = false;
+    isIncreaseBet = false;
+    isDecreaseBet = false;
+  });
+
+  //#region Change value every 0.1 second
+  var elapsed = 0;
+  engine.ticker.add((time) => {
+    if (!isMouseDown) return;
+
+    // console.log(time.elapsedMS);
+    elapsed += time.elapsedMS / 1000;
+
+    // Change bet value every 100ms when mouse is pressed
+    if (elapsed >= 0.1) {
+      elapsed = 0; // reset
+      if (isIncreaseBet && currBetIndex + 1 < bet_config.length) updateBetValueText(++currBetIndex);
+      if (isDecreaseBet && currBetIndex - 1 >= 0) updateBetValueText(--currBetIndex);
+    }
+
+  });
+
+
+  //#endregion
 
   //#region  Select bombs
   const selectBombs = new Select({
@@ -397,6 +489,11 @@ setEngine(engine);
         }
       });
     });
+  }
+
+  function updateBetValueText(currBetIndex: number) {
+    // Update bet text
+    inputBetValue.value = String(bet_config[currBetIndex]);
   }
 })();
 
