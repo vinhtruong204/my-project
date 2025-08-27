@@ -1,4 +1,4 @@
-import { Color, Container, Sprite, Text, Triangle } from "pixi.js";
+import { Color, Container, Sprite, Text, Ticker, Triangle } from "pixi.js";
 import { setEngine } from "./app/getEngine";
 import { MainScreen } from "./app/screens/main/MainScreen";
 import { userSettings } from "./app/utils/userSettings";
@@ -14,8 +14,8 @@ import { GlobalConfig } from "./app/config/GlobalConfig";
 import { Input, Select } from "@pixi/ui";
 import { GameStateManager } from "./app/manage_game_states/GameStateManager";
 import { GameState } from "./app/manage_game_states/GameState";
-import { style, text } from "motion/react-client";
 import { GetCoefficientProfit } from "./app/utils/GetCoefficientProfit";
+import { fillOffset, number } from "motion";
 // import "@esotericsoftware/spine-pixi-v8";
 
 // Create a new creation engine instance
@@ -53,11 +53,26 @@ setEngine(engine);
   //   }
   // });
 
-  const betText = new Text("Bet value", {
-    fill: 0xffffff,
-    fontSize: 32,
-    fontFamily: 'Arial'
+  const betText = new Text({
+    text: "Bet value", style: {
+      fill: 0xffffff,
+      fontSize: 32,
+      fontFamily: 'Arial'
+    }
   });
+
+  var balance = 10000;
+  //#region Balance text
+  const balanceText = new Text({
+    text: `Balance: ${balance.toFixed(2)}`,
+    style: {
+      fill: 0xffffff,
+      fontSize: 32,
+      fontFamily: 'Arial'
+    }
+  });
+
+  balanceText.position.set(betText.width * 2, 0);
 
   const inputSprite = Sprite.from('input_field.png');
 
@@ -218,10 +233,12 @@ setEngine(engine);
   });
 
   // Label select bombs
-  const bombLabel = new Text("Select bombs", {
-    fill: '0xffffff',
-    fontFamily: 'Arial',
-    fontSize: 32
+  const bombLabel = new Text({
+    text: "Select bombs", style: {
+      fill: '0xffffff',
+      fontFamily: 'Arial',
+      fontSize: 32
+    }
   });
 
   bombLabel.position.set(0, selectBombs.y - bombLabel.height);
@@ -251,6 +268,8 @@ setEngine(engine);
     resetButtonPressed();
 
     updateGameResultText(true);
+
+    updateBalaceText(Number(inputBetValue.value), false);
     selectBombs.eventMode = 'none';
     GameStateManager.getInstance().setState(GameState.BETTING);
 
@@ -263,7 +282,7 @@ setEngine(engine);
     betButton.alpha = 0.5;
   });
 
-  engine.stage.addChild(betText, inputBetValue, bombLabel, selectBombs, betButton);
+  engine.stage.addChild(betText, balanceText, inputBetValue, bombLabel, selectBombs, betButton);
 
 
   //#endregion 
@@ -282,10 +301,12 @@ setEngine(engine);
   inforText.position.set(0, betButton.y + betButton.height * 2);
 
   // Profit text
-  const profitText = new Text('Total profit (1.00x): ', {
-    fill: '0xffffff',
-    fontFamily: 'Arial',
-    fontSize: 32
+  const profitText = new Text({
+    text: 'Total profit (1.00x): ', style: {
+      fill: '0xffffff',
+      fontFamily: 'Arial',
+      fontSize: 32
+    }
   });
   profitText.position.set(0, inforText.y + inforText.height * 2);
 
@@ -320,6 +341,81 @@ setEngine(engine);
   });
 
   engine.stage.addChild(inforText, profitText, withdrawButton);
+
+
+  //#endregion
+
+  //#region Auto bet UI
+  // Number of auto plays
+  const autoText = new Text({
+    text: "Auto play", style: {
+      fill: 0xffffff,
+      fontSize: 32,
+      fontFamily: 'Arial'
+    }
+  });
+
+  autoText.position.set(0, withdrawButton.y + withdrawButton.height);
+
+
+  const inputNumberAuto = new Input({
+    bg: `input_field.png`,
+    placeholder: 'Infinity',
+    value: '1',
+    textStyle: {
+      fontFamily: 'Arial',
+      fill: 'black'
+    },
+    padding: [11, 11, 11, 11],
+  });
+
+  inputNumberAuto.position.set(0, autoText.y + autoText.height * 2);
+
+  //#region Start Auto button
+  const startAutoButton = new Button({
+    text: 'Start',
+    width: 200,
+    height: 100,
+    fontSize: 32
+  });
+
+  startAutoButton.anchor.set(0);
+  startAutoButton.position.set(0, inputNumberAuto.y + inputNumberAuto.height * 2);
+
+  // Handle start auto event 
+  startAutoButton.onPress.connect(() => {
+    if (GameStateManager.getInstance().getState() === GameState.BETTING) return;
+
+    if (hasNoSelectedButtons()) {
+      alert('Please select at least 1 square before starting!');
+      return;
+    }
+
+    GameStateManager.getInstance().setState(GameState.BETTING);
+
+    const ticker = new Ticker();
+
+    var autoElapsed = 0;
+    var autoCount = Number(inputNumberAuto.value);
+
+    ticker.add((time) => {
+      autoElapsed += time.elapsedMS / 1000;
+
+      if (autoElapsed >= 1) {
+        autoElapsed = 0;
+        console.log("hey", autoCount--);
+        if (autoCount >= 0) {
+          GameStateManager.getInstance().setState(GameState.NOT_BETTING);
+          ticker.stop();
+        }
+      }
+    });
+
+
+    ticker.start();
+  });
+
+  engine.stage.addChild(autoText, inputNumberAuto, startAutoButton);
 
 
   //#endregion
@@ -417,6 +513,7 @@ setEngine(engine);
         button.defaultView = `button.png`;
         button.setSize(buttonSize, buttonSize);
         button.pressed = false;
+        button.selected = false;
         button.alpha = 1;
       });
     });
@@ -457,7 +554,7 @@ setEngine(engine);
           bombSprite.setSize(buttonSize, buttonSize);
           button.defaultView = bombSprite;
         }
-        button.alpha = 0.5;
+        button.alpha = !button.selected ? 0.5 : 1;
 
       });
     });
@@ -492,6 +589,9 @@ setEngine(engine);
           gameResultText.alpha = 1;
 
           button.addChild(gameResultText);
+
+          // Update balance after withdraw
+          updateBalaceText(totalProfit, true);
         }
       });
     });
@@ -506,6 +606,21 @@ setEngine(engine);
     return boardContainer.children.every(column =>
       column.children.every(child => !(child as Button).pressed)
     );
+  }
+
+  function hasNoSelectedButtons(): boolean {
+    return boardContainer.children.every(column =>
+      column.children.every(child => !(child as Button).selected)
+    );
+  }
+
+  function updateBalaceText(value: number, receive: boolean) {
+    if (receive)
+      balance += value;
+    else
+      balance -= value;
+
+    balanceText.text = `Balance: ${balance.toFixed(2)}`
   }
 })();
 
