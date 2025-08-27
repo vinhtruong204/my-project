@@ -256,7 +256,7 @@ setEngine(engine);
   betButton.position.set(0, selectBombs.position.y + selectBombs.height * 2);
 
 
-  let currBombsCount = 0;
+  var currBombsCount = 1;
   let diamondRemaining = 0;
 
   betButton.onPress.connect(async () => {
