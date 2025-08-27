@@ -9,11 +9,13 @@ import { CreationEngine } from "./engine/engine";
  */
 import "@pixi/sound";
 import { Button } from "./app/ui/Button";
-import { GetItem } from "./app/game_mechanic/GetItem";
+import { GetItem } from "./app/utils/GetItem";
 import { GlobalConfig } from "./app/config/GlobalConfig";
 import { Input, Select } from "@pixi/ui";
 import { GameStateManager } from "./app/manage_game_states/GameStateManager";
 import { GameState } from "./app/manage_game_states/GameState";
+import { style, text } from "motion/react-client";
+import { GetCoefficientProfit } from "./app/utils/GetCoefficientProfit";
 // import "@esotericsoftware/spine-pixi-v8";
 
 // Create a new creation engine instance
@@ -105,8 +107,8 @@ setEngine(engine);
     if (GameStateManager.getInstance().getState() === GameState.BETTING) return;
 
     // TODO: Decrease bet val
-    if (currBetIndex - 1 >= 0)
-      updateBetValueText(--currBetIndex);
+    // if (currBetIndex - 1 >= 0)
+    //   updateBetValueText(--currBetIndex);
 
     isMouseDown = true;
     isDecreaseBet = true;
@@ -127,8 +129,8 @@ setEngine(engine);
     if (GameStateManager.getInstance().getState() === GameState.BETTING) return;
 
     // TODO: Increase bet val
-    if (currBetIndex + 1 < bet_config.length)
-      updateBetValueText(++currBetIndex);
+    // if (currBetIndex + 1 < bet_config.length)
+    //   updateBetValueText(++currBetIndex);
 
     isMouseDown = true;
     isIncreaseBet = true;
@@ -269,10 +271,13 @@ setEngine(engine);
   //#region Betting UI
 
   // Bombs count and diamonds remaining text
-  const inforText = new Text('Bomb: 0  Diamond: 25', {
-    fill: '0xffffff',
-    fontFamily: 'Arial',
-    fontSize: 32
+  const inforText = new Text({
+    text: 'Bomb: 0  Diamond: 25',
+    style: {
+      fill: '0xffffff',
+      fontFamily: 'Arial',
+      fontSize: 32
+    }
   });
   inforText.position.set(0, betButton.y + betButton.height * 2);
 
@@ -298,7 +303,8 @@ setEngine(engine);
   withdrawButton.position.set(0, profitText.y + profitText.height * 2);
 
   withdrawButton.onPress.connect(() => {
-    if (GameStateManager.getInstance().getState() == GameState.NOT_BETTING) return;
+    if (GameStateManager.getInstance().getState() === GameState.NOT_BETTING) return;
+    if (hasNoPressedButtons()) return;
     GameStateManager.getInstance().setState(GameState.NOT_BETTING);
 
     selectBombs.eventMode = 'passive';
@@ -428,7 +434,7 @@ setEngine(engine);
 
     // Calculate diamon count
     let diamondCollected = GlobalConfig.TOTAL_ROWS * GlobalConfig.TOTAL_COLUMNS - diamondRemaining - currBombsCount;
-    let coefficient = 1 + diamondCollected * 0.03;
+    let coefficient = 1 + diamondCollected * GetCoefficientProfit.getCoefficient(currBombsCount);
     let totalProfit = coefficient * Number(inputBetValue.value);
     profitText.text = `Total profit (${coefficient.toFixed(2)}x): ${totalProfit.toFixed(2)}`;
   }
@@ -475,7 +481,7 @@ setEngine(engine);
 
           // Calculate diamon count
           let diamondCollected = GlobalConfig.TOTAL_ROWS * GlobalConfig.TOTAL_COLUMNS - diamondRemaining - currBombsCount;
-          let coefficient = 1 + diamondCollected * 0.03;
+          let coefficient = 1 + diamondCollected * GetCoefficientProfit.getCoefficient(currBombsCount);
           let totalProfit = coefficient * Number(inputBetValue.value);
 
           // 
@@ -494,6 +500,12 @@ setEngine(engine);
   function updateBetValueText(currBetIndex: number) {
     // Update bet text
     inputBetValue.value = String(bet_config[currBetIndex]);
+  }
+
+  function hasNoPressedButtons(): boolean {
+    return boardContainer.children.every(column =>
+      column.children.every(child => !(child as Button).pressed)
+    );
   }
 })();
 

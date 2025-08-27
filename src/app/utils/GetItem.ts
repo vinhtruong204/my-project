@@ -38,21 +38,21 @@ export class GetItem {
             ]
         ];
 
-    public static generateMatrix(mines: number) {
+    public static generateMatrix(bombs: number) {
         const rows = 5;
         const cols = 5;
         const totalCells = rows * cols;
 
-        if (mines >= totalCells) {
+        if (bombs >= totalCells) {
             throw new Error("Too many bombs! More than available cells.");
         }
 
         // Start with all diamonds (1)
         const flat: number[] = Array(totalCells).fill(1);
 
-        // Randomly replace with mines (0)
+        // Randomly replace with bombs (0)
         let placed = 0;
-        while (placed < mines) {
+        while (placed < bombs) {
             const randIndex = Math.floor(Math.random() * totalCells);
             if (flat[randIndex] === 1) {
                 flat[randIndex] = 0;
