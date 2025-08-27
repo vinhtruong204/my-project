@@ -46,6 +46,18 @@ export class Button extends FancyButton {
     }
   }
 
+  private _selected: boolean = false;
+  get selected(): boolean {
+    return this._selected;
+  }
+  set selected(value: boolean) {
+    if (value) {
+      this._pressed = true;
+    }
+
+    this._selected = value;
+  }
+
   constructor(options: Partial<ButtonOptions> = {}) {
     const opts = { ...defaultButtonOptions, ...options };
 
