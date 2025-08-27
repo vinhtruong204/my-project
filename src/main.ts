@@ -226,6 +226,7 @@ setEngine(engine);
 
   selectBombs.onSelect.connect((value, text) => {
     console.log(`value = ${value}, text = ${text}`);
+    currBombsCount = value + 1;
     GetItem.generateMatrix(value + 1);
     resetButtonPressed();
     updateGameResultText(true);
