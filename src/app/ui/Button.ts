@@ -51,10 +51,7 @@ export class Button extends FancyButton {
     return this._selected;
   }
   set selected(value: boolean) {
-    if (value) {
-      this._pressed = true;
-    }
-
+    this.alpha = value ? 0.75 : 1;
     this._selected = value;
   }
 

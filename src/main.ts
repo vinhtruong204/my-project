@@ -1,4 +1,4 @@
-import { Color, Container, Sprite, Text, Ticker, Triangle } from "pixi.js";
+import { Color, Container, Sprite, Text, Ticker } from "pixi.js";
 import { setEngine } from "./app/getEngine";
 import { MainScreen } from "./app/screens/main/MainScreen";
 import { userSettings } from "./app/utils/userSettings";
@@ -15,7 +15,6 @@ import { Input, Select } from "@pixi/ui";
 import { GameStateManager } from "./app/manage_game_states/GameStateManager";
 import { GameState } from "./app/manage_game_states/GameState";
 import { GetCoefficientProfit } from "./app/utils/GetCoefficientProfit";
-import { fillOffset, number } from "motion";
 // import "@esotericsoftware/spine-pixi-v8";
 
 // Create a new creation engine instance
@@ -264,6 +263,10 @@ setEngine(engine);
     // await engine.navigation.presentPopup(GameFinishPopup);
 
     if (GameStateManager.getInstance().getState() == GameState.BETTING) return;
+    if (!isEnoughBalance(Number(inputBetValue.value))) {
+      alert("Not enough balance!");
+      return;
+    }
 
     resetButtonPressed();
 
@@ -348,7 +351,8 @@ setEngine(engine);
   //#region Auto bet UI
   // Number of auto plays
   const autoText = new Text({
-    text: "Auto play", style: {
+    text: "Auto play",
+    style: {
       fill: 0xffffff,
       fontSize: 32,
       fontFamily: 'Arial'
@@ -356,7 +360,6 @@ setEngine(engine);
   });
 
   autoText.position.set(0, withdrawButton.y + withdrawButton.height);
-
 
   const inputNumberAuto = new Input({
     bg: `input_field.png`,
@@ -395,22 +398,38 @@ setEngine(engine);
 
     const ticker = new Ticker();
 
-    var autoElapsed = 0;
-    var autoCount = Number(inputNumberAuto.value);
+    let autoElapsed = 0;
+    let autoCount = Number(inputNumberAuto.value);
+    let phase: "waiting" | "reveal" | "reset" = "waiting";
+
 
     ticker.add((time) => {
       autoElapsed += time.elapsedMS / 1000;
 
       if (autoElapsed >= 1) {
         autoElapsed = 0;
-        console.log("hey", autoCount--);
-        if (autoCount >= 0) {
-          GameStateManager.getInstance().setState(GameState.NOT_BETTING);
-          ticker.stop();
+
+        if (phase === "waiting") {
+          GetItem.generateMatrix(selectBombs.value + 1);
+          // reveal
+          revealAllButtons();
+          updateProfitText();
+          updateBalaceTextAfterAuto();
+          phase = "reset";
+        }
+        else if (phase === "reset") {
+          // reset after delay
+          resetButtonPressedWithoutResetSelected();
+          phase = "waiting";
+          autoCount--;
+
+          if (autoCount <= 0) {
+            GameStateManager.getInstance().setState(GameState.NOT_BETTING);
+            ticker.stop();
+          }
         }
       }
     });
-
 
     ticker.start();
   });
@@ -445,8 +464,13 @@ setEngine(engine);
 
       //#region Square Button
       button.onPress.connect(() => {
-        if (GameStateManager.getInstance().getState() == GameState.NOT_BETTING) return;
+        if (GameStateManager.getInstance().getState() == GameState.NOT_BETTING) {
+          button.selected = true;
+          return;
+        }
+
         if (button.pressed) return;
+
         // Update infor text
         updateInforText(selectBombs.value + 1, --diamondRemaining);
 
@@ -541,7 +565,6 @@ setEngine(engine);
     boardContainer.children.forEach((column) => {
       column.children.forEach((child) => {
         const button = child as Button;
-        if (button.pressed) return;
 
         const [i, j] = [button.parent!.getChildIndex(button), boardContainer.getChildIndex(button.parent!)];
         if (GetItem.getItemType(i, j)) {
@@ -554,7 +577,8 @@ setEngine(engine);
           bombSprite.setSize(buttonSize, buttonSize);
           button.defaultView = bombSprite;
         }
-        button.alpha = !button.selected ? 0.5 : 1;
+        if (button.pressed || button.selected) button.alpha = 1;
+        else button.alpha = 0.5;
 
       });
     });
@@ -617,10 +641,53 @@ setEngine(engine);
   function updateBalaceText(value: number, receive: boolean) {
     if (receive)
       balance += value;
-    else
+    else {
       balance -= value;
+    }
 
     balanceText.text = `Balance: ${balance.toFixed(2)}`
+  }
+
+  function isEnoughBalance(value: number): boolean {
+    return balance - value >= 0;
+  }
+
+  function resetButtonPressedWithoutResetSelected() {
+    boardContainer.children.forEach((column) => {
+      column.children.forEach((child) => {
+        const button = child as Button;
+        button.defaultView = `button.png`;
+        button.setSize(buttonSize, buttonSize);
+        button.pressed = false;
+        button.alpha = button.selected ? 0.75 : 1;
+      });
+    });
+  }
+
+  function updateBalaceTextAfterAuto() {
+
+    let diamondCollected = 0;
+    let bombFlag = false;
+
+    boardContainer.children.forEach((column) => {
+      column.children.forEach((child) => {
+        const button = child as Button;
+        if (button.selected) {
+          const [i, j] = [button.parent!.getChildIndex(button), boardContainer.getChildIndex(button.parent!)];
+          if (GetItem.getItemType(i, j)) {
+            diamondCollected++;
+          }
+          else {
+            bombFlag = true;
+          }
+        }
+      });
+    });
+
+    let coefficient = 1 + diamondCollected * GetCoefficientProfit.getCoefficient(Number(selectBombs.value));
+    let totalProfit = coefficient * Number(inputBetValue.value);
+    if (!bombFlag)
+      updateBalaceText(totalProfit, true);
   }
 })();
 
