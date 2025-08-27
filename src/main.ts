@@ -389,6 +389,7 @@ setEngine(engine);
   startAutoButton.onPress.connect(() => {
     if (GameStateManager.getInstance().getState() === GameState.BETTING) return;
 
+    updateGameResultText(true);
     if (hasNoSelectedButtons()) {
       alert('Please select at least 1 square before starting!');
       return;
@@ -410,6 +411,9 @@ setEngine(engine);
         autoElapsed = 0;
 
         if (phase === "waiting") {
+
+
+          // Generate matrix
           GetItem.generateMatrix(selectBombs.value + 1);
           // reveal
           revealAllButtons();
@@ -420,8 +424,18 @@ setEngine(engine);
         else if (phase === "reset") {
           // reset after delay
           resetButtonPressedWithoutResetSelected();
+          if (!isEnoughBalance(Number(inputBetValue.value))) {
+            alert("Not enough balance!");
+            ticker.stop();
+            return;
+          }
+
+
+          // Update text balance
           phase = "waiting";
           autoCount--;
+          if (autoCount > 0)
+            updateBalaceText(Number(inputBetValue.value), false);
 
           if (autoCount <= 0) {
             GameStateManager.getInstance().setState(GameState.NOT_BETTING);
@@ -684,7 +698,7 @@ setEngine(engine);
       });
     });
 
-    let coefficient = 1 + diamondCollected * GetCoefficientProfit.getCoefficient(Number(selectBombs.value));
+    let coefficient = 1 + diamondCollected * GetCoefficientProfit.getCoefficient(currBombsCount);
     let totalProfit = coefficient * Number(inputBetValue.value);
     if (!bombFlag)
       updateBalaceText(totalProfit, true);
