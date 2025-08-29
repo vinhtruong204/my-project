@@ -293,6 +293,7 @@ setEngine(engine);
 
   selectBombs.onSelect.connect((value, text) => {
     console.log(`value = ${value}, text = ${text}`);
+    currBombsCount = value + 1;
     GetItem.generateMatrix(value + 1);
     resetButtonPressed();
     updateGameResultText(true);
@@ -322,7 +323,7 @@ setEngine(engine);
   betButton.anchor.set(0, 0);
   betButton.position.set(0, selectBombs.position.y + selectBombs.height * 2);
 
-  let currBombsCount = 0;
+  var currBombsCount = 1;
   let diamondRemaining = 0;
 
   betButton.onPress.connect(async () => {
