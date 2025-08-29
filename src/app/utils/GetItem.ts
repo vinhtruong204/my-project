@@ -1,42 +1,11 @@
 export class GetItem {
-    private static mockData =
-        [
-            [
-                1,
-                1,
-                1,
-                1,
-                1
-            ], // a reel
-            [
-                1,
-                1,
-                1,
-                1,
-                1
-            ],
-            [
-                1,
-                1,
-                1,
-                1,
-                1
-            ],
-            [
-                1,
-                1,
-                1,
-                1,
-                1
-            ],
-            [
-                0,
-                1,
-                1,
-                1,
-                1
-            ]
-        ];
+    private static mockData: number[][] = [
+        [1, 1, 1, 1, 1],
+        [1, 1, 1, 1, 1],
+        [1, 1, 1, 1, 1],
+        [1, 1, 1, 1, 1],
+        [0, 1, 1, 1, 1]
+    ];
 
     public static generateMatrix(bombs: number) {
         const rows = 5;
@@ -47,10 +16,8 @@ export class GetItem {
             throw new Error("Too many bombs! More than available cells.");
         }
 
-        // Start with all diamonds (1)
         const flat: number[] = Array(totalCells).fill(1);
 
-        // Randomly replace with bombs (0)
         let placed = 0;
         while (placed < bombs) {
             const randIndex = Math.floor(Math.random() * totalCells);
@@ -60,22 +27,31 @@ export class GetItem {
             }
         }
 
-        // Convert to 2D array
         const matrix: number[][] = [];
         for (let r = 0; r < rows; r++) {
             matrix.push(flat.slice(r * cols, (r + 1) * cols));
         }
 
-        // update mockData
         this.mockData = matrix;
     }
 
-    public static getItemType(i: number, j: number): number {
-        // for (let row = 0; row < this.mockData.length; row++) {
-        //     for (let col = 0; col < this.mockData[row].length; col++) {
-        //         console.log(`mockData[${row}][${col}]: ${this.mockData[row][col]}`);
-        //     }
-        // }
-        return this.mockData[j][i];
+    public static async getItemType(i: number, j: number): Promise<any> {
+        return new Promise((resolve) => {
+            setTimeout(() => {
+                resolve(this.mockData[j][i]);
+            }, 200);
+        });
+    }
+
+    public static async fetchData(): Promise<any> {
+        return new Promise((resolve) => {
+            setTimeout(() => {
+                resolve({
+                    sender: 'Server',
+                    matrix: this.mockData,
+                    error: 0
+                });
+            }, 300);
+        });
     }
 }
