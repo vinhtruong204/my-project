@@ -60,9 +60,9 @@ export class CreationEngine extends Application {
     this.stage.layout = {
       width: this.screen.width,
       height: this.screen.height,
-      justifyContent: 'center',
-      alignItems: 'center'
-    }
+      justifyContent: "center",
+      alignItems: "center",
+    };
   }
 
   public override destroy(
