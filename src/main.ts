@@ -1,4 +1,4 @@
-import { Color, Container, Sprite, Text, Ticker } from "pixi.js";
+import { Color, Container, Graphics, Rectangle, RoundedRectangle, Sprite, Text, Ticker } from "pixi.js";
 import { setEngine } from "./app/getEngine";
 import { MainScreen } from "./app/screens/main/MainScreen";
 import { userSettings } from "./app/utils/userSettings";
@@ -15,6 +15,7 @@ import { Input, Select } from "@pixi/ui";
 import { GameStateManager } from "./app/manage_game_states/GameStateManager";
 import { GameState } from "./app/manage_game_states/GameState";
 import { GetCoefficientProfit } from "./app/utils/GetCoefficientProfit";
+import { InnerCapsule } from "./custom/InnerCapsule";
 // import "@esotericsoftware/spine-pixi-v8";
 
 // Create a new creation engine instance
@@ -38,11 +39,53 @@ setEngine(engine);
 
   (globalThis as any).__PIXI_APP__ = engine;
 
-  // Add background 
+  // Add background
   const bg = Sprite.from("green_wall.jpg");
   bg.setSize(engine.canvas.width, engine.canvas.height);
   bg.scale = 1;
   engine.stage.addChild(bg);
+
+
+  //#region Capsule
+  // const capsuleWidth = 500;
+  // const capsuleHeight = 100;
+  // const cornerRadius = capsuleHeight / 2;
+
+  // const rect = new Graphics()
+  //   .roundRect(0, 0, capsuleWidth, capsuleHeight, cornerRadius)
+  //   .fill({ color: 'gray', alpha: 0.75 })
+  //   .stroke({ width: 5, color: 'white', alignment: 0.5 });
+
+  // const childRect = new Graphics()
+  //   .roundRect(0, 0, capsuleWidth / 2, capsuleHeight, cornerRadius)
+  //   .fill({ color: 'green', alpha: 0.5 })
+  //   .stroke({ width: 5, color: 'white', alignment: 0.5 });
+  // rect.addChild(childRect);
+
+
+
+  // const textManual = new Text({
+  //   text: "Manual",
+  //   style: {
+  //     fontSize: 32,
+  //     fontFamily: "Arial",
+  //     align: 'center',
+  //     fill: '0x000000'
+  //   }
+  // });
+
+  // textManual.anchor = 0.5;
+  // textManual.position.set(childRect.width / 2, childRect.height / 2);
+
+  // childRect.addChild(textManual);
+
+  // rect.addChild(childRect);
+  // rect.x = 100;
+  // rect.y = 100;
+
+
+  engine.stage.addChild(new InnerCapsule(100, 100));
+
 
   //#region  Bet container
   // const betContainer = new Container({
@@ -53,51 +96,54 @@ setEngine(engine);
   // });
 
   const betText = new Text({
-    text: "Bet value", style: {
+    text: "Bet value",
+    style: {
       fill: 0xffffff,
       fontSize: 32,
-      fontFamily: 'Arial'
-    }
+      fontFamily: "Arial",
+    },
   });
 
-  var balance = 10000;
+  let balance = 10000;
   //#region Balance text
   const balanceText = new Text({
     text: `Balance: ${balance.toFixed(2)}`,
     style: {
       fill: 0xffffff,
       fontSize: 32,
-      fontFamily: 'Arial'
-    }
+      fontFamily: "Arial",
+    },
   });
 
   balanceText.position.set(betText.width * 2, 0);
 
-  const inputSprite = Sprite.from('input_field.png');
+  const inputSprite = Sprite.from("input_field.png");
 
   //#region Input field
   const inputBetValue = new Input({
     bg: inputSprite,
     textStyle: {
-      fontFamily: 'Arial',
-      fill: 'black'
+      fontFamily: "Arial",
+      fill: "black",
     },
     padding: [11, 11, 11, 11],
   });
 
   // Handle bet value change
-  const bet_config = [0.2, 0.4, 0.6, 0.8, 1, 1.2, 1.4, 1.6, 100, 2, 4, 6, 8, 10, 12, 14, 16, 18, 20, 40, 60, 80, 100, 120, 140, 160000, 180, 200, 300, 400, 500000, 600000, 700000, 800000, 900000, 1000000];
-  var currBetIndex = 0;
-  var isMouseDown = false;
-  var isIncreaseBet = false;
-  var isDecreaseBet = false;
+  const bet_config = [
+    20, 40, 60, 100, 160, 200, 250, 500, 750, 1000
+  ];
+  let currBetIndex = 0;
+  let isMouseDown = false;
+  let isIncreaseBet = false;
+  let isDecreaseBet = false;
 
   // Initial bet value
   updateBetValueText(currBetIndex);
 
   //#region Handle change bet value
   inputBetValue.onChange.connect((text) => {
-    let cleaned = text.replace(/\D/g, '');
+    const cleaned = text.replace(/\D/g, "");
     if (cleaned !== text) inputBetValue.value = cleaned;
   });
 
@@ -107,17 +153,17 @@ setEngine(engine);
 
   //#region Decrease bet value
   // Add two triangles to inputBetValue: one pointing down, one pointing up
-  const triangleDown = Sprite.from('triangle.png');
+  const triangleDown = Sprite.from("triangle.png");
   triangleDown.scale.set(0.5, 0.5);
   triangleDown.position.set(inputBetValue.width - triangleDown.width, 20);
   triangleDown.zIndex = 10;
   triangleDown.visible = false;
-  triangleDown.cursor = 'pointer';
+  triangleDown.cursor = "pointer";
   triangleDown.interactive = true;
   inputBetValue.addChild(triangleDown);
 
   // Handle decrease bet value event
-  triangleDown.on('pointerdown', () => {
+  triangleDown.on("pointerdown", () => {
     if (GameStateManager.getInstance().getState() === GameState.BETTING) return;
 
     // TODO: Decrease bet val
@@ -130,16 +176,16 @@ setEngine(engine);
   });
 
   //#region Increase bet value
-  const triangleUp = Sprite.from('triangle.png');
+  const triangleUp = Sprite.from("triangle.png");
   triangleUp.scale.set(0.5, -0.5); // Flip vertically for up
   triangleUp.position.set(inputBetValue.width - triangleUp.width, 17);
   triangleUp.zIndex = 10;
   triangleUp.visible = false;
-  triangleUp.cursor = 'pointer';
+  triangleUp.cursor = "pointer";
   triangleUp.interactive = true;
   inputBetValue.addChild(triangleUp);
 
-  triangleUp.on('pointerdown', () => {
+  triangleUp.on("pointerdown", () => {
     if (GameStateManager.getInstance().getState() === GameState.BETTING) return;
 
     // TODO: Increase bet val
@@ -152,17 +198,17 @@ setEngine(engine);
   });
 
   // Handle hover event
-  inputBetValue.on('pointerenter', () => {
+  inputBetValue.on("pointerenter", () => {
     triangleUp.visible = true;
     triangleDown.visible = true;
   });
 
-  inputBetValue.on('pointerout', () => {
+  inputBetValue.on("pointerout", () => {
     triangleUp.visible = false;
     triangleDown.visible = false;
   });
 
-  inputBetValue.on('pointerupoutside', () => {
+  inputBetValue.on("pointerupoutside", () => {
     triangleUp.visible = false;
     triangleDown.visible = false;
     isMouseDown = false;
@@ -170,14 +216,14 @@ setEngine(engine);
     isIncreaseBet = false;
   });
 
-  inputBetValue.on('pointerup', () => {
+  inputBetValue.on("pointerup", () => {
     isMouseDown = false;
     isIncreaseBet = false;
     isDecreaseBet = false;
   });
 
   //#region Change value every 0.1 second
-  var elapsed = 0;
+  let elapsed = 0;
   engine.ticker.add((time) => {
     if (!isMouseDown) return;
 
@@ -187,12 +233,12 @@ setEngine(engine);
     // Change bet value every 100ms when mouse is pressed
     if (elapsed >= 0.1) {
       elapsed = 0; // reset
-      if (isIncreaseBet && currBetIndex + 1 < bet_config.length) updateBetValueText(++currBetIndex);
-      if (isDecreaseBet && currBetIndex - 1 >= 0) updateBetValueText(--currBetIndex);
+      if (isIncreaseBet && currBetIndex + 1 < bet_config.length)
+        updateBetValueText(++currBetIndex);
+      if (isDecreaseBet && currBetIndex - 1 >= 0)
+        updateBetValueText(--currBetIndex);
     }
-
   });
-
 
   //#endregion
 
@@ -203,15 +249,36 @@ setEngine(engine);
     textStyle: { fill: 0x000000, fontSize: 32 },
     items: {
       items: [
-        '1', '2', '3', '4', '5', '6', '7', '8', '9', '10',
-        '11', '12', '13', '14', '15', '16', '17', '18', '19', '20',
-        '21', '22', '23', '24'
+        "1",
+        "2",
+        "3",
+        "4",
+        "5",
+        "6",
+        "7",
+        "8",
+        "9",
+        "10",
+        "11",
+        "12",
+        "13",
+        "14",
+        "15",
+        "16",
+        "17",
+        "18",
+        "19",
+        "20",
+        "21",
+        "22",
+        "23",
+        "24",
       ],
-      backgroundColor: new Color('white'),
-      hoverColor: new Color('gray'),
+      backgroundColor: new Color("white"),
+      hoverColor: new Color("gray"),
       width: 400,
       height: 50,
-      radius: 30
+      radius: 30,
     },
     scrollBox: {
       width: 400,
@@ -233,11 +300,12 @@ setEngine(engine);
 
   // Label select bombs
   const bombLabel = new Text({
-    text: "Select bombs", style: {
-      fill: '0xffffff',
-      fontFamily: 'Arial',
-      fontSize: 32
-    }
+    text: "Select bombs",
+    style: {
+      fill: "0xffffff",
+      fontFamily: "Arial",
+      fontSize: 32,
+    },
   });
 
   bombLabel.position.set(0, selectBombs.y - bombLabel.height);
@@ -245,21 +313,20 @@ setEngine(engine);
 
   //#region  Bet button
   const betButton = new Button({
-    text: 'Bet',
+    text: "Bet",
     width: 200,
     height: 100,
-    fontSize: 32
+    fontSize: 32,
   });
 
   betButton.anchor.set(0, 0);
   betButton.position.set(0, selectBombs.position.y + selectBombs.height * 2);
 
-
   let currBombsCount = 0;
   let diamondRemaining = 0;
 
   betButton.onPress.connect(async () => {
-    // Test popup 
+    // Test popup
     // await engine.navigation.presentPopup(GameFinishPopup);
 
     if (GameStateManager.getInstance().getState() == GameState.BETTING) return;
@@ -273,52 +340,60 @@ setEngine(engine);
     updateGameResultText(true);
 
     updateBalaceText(Number(inputBetValue.value), false);
-    selectBombs.eventMode = 'none';
+    selectBombs.eventMode = "none";
     GameStateManager.getInstance().setState(GameState.BETTING);
 
     // Set infor text
     currBombsCount = selectBombs.value + 1;
-    diamondRemaining = GlobalConfig.TOTAL_ROWS * GlobalConfig.TOTAL_COLUMNS - currBombsCount;
+    diamondRemaining =
+      GlobalConfig.TOTAL_ROWS * GlobalConfig.TOTAL_COLUMNS - currBombsCount;
     updateInforText(currBombsCount, diamondRemaining);
     updateProfitText();
     withdrawButton.visible = true;
     betButton.alpha = 0.5;
   });
 
-  engine.stage.addChild(betText, balanceText, inputBetValue, bombLabel, selectBombs, betButton);
+  // engine.stage.addChild(
+  //   betText,
+  //   balanceText,
+  //   inputBetValue,
+  //   bombLabel,
+  //   selectBombs,
+  //   betButton,
+  // );
 
-
-  //#endregion 
+  //#endregion
 
   //#region Betting UI
 
   // Bombs count and diamonds remaining text
   const inforText = new Text({
-    text: 'Bomb: 0  Diamond: 25',
+    text: "Bomb: 0  Diamond: 25",
     style: {
-      fill: '0xffffff',
-      fontFamily: 'Arial',
-      fontSize: 32
-    }
+      fill: "0xffffff",
+      fontFamily: "Arial",
+      fontSize: 32,
+    },
   });
   inforText.position.set(0, betButton.y + betButton.height * 2);
 
   // Profit text
   const profitText = new Text({
-    text: 'Total profit (1.00x): ', style: {
-      fill: '0xffffff',
-      fontFamily: 'Arial',
-      fontSize: 32
-    }
+    text: "Total profit (1.00x): ",
+    style: {
+      fill: "0xffffff",
+      fontFamily: "Arial",
+      fontSize: 32,
+    },
   });
   profitText.position.set(0, inforText.y + inforText.height * 2);
 
   //#region Withdraw button
   const withdrawButton = new Button({
-    text: 'Withdraw',
+    text: "Withdraw",
     width: 200,
     height: 100,
-    fontSize: 32
+    fontSize: 32,
   });
   withdrawButton.visible = false;
 
@@ -327,11 +402,12 @@ setEngine(engine);
   withdrawButton.position.set(0, profitText.y + profitText.height * 2);
 
   withdrawButton.onPress.connect(() => {
-    if (GameStateManager.getInstance().getState() === GameState.NOT_BETTING) return;
+    if (GameStateManager.getInstance().getState() === GameState.NOT_BETTING)
+      return;
     if (hasNoPressedButtons()) return;
     GameStateManager.getInstance().setState(GameState.NOT_BETTING);
 
-    selectBombs.eventMode = 'passive';
+    selectBombs.eventMode = "passive";
 
     revealAllButtons();
     // resetButtonPressed();
@@ -345,17 +421,16 @@ setEngine(engine);
 
   engine.stage.addChild(inforText, profitText, withdrawButton);
 
-
   //#endregion
 
   //#region Auto bet UI
   const autoText = new Text({
-    text: "Auto play",
+    text: "Auto plays",
     style: {
       fill: 0xffffff,
       fontSize: 32,
-      fontFamily: 'Arial'
-    }
+      fontFamily: "Arial",
+    },
   });
 
   autoText.position.set(0, withdrawButton.y + withdrawButton.height);
@@ -365,11 +440,11 @@ setEngine(engine);
   inputNumberAutoSprite.height = 50;
   const inputNumberAuto = new Input({
     bg: inputNumberAutoSprite,
-    placeholder: 'Infinity',
-    value: '1',
+    placeholder: "Infinity",
+    value: "1",
     textStyle: {
-      fontFamily: 'Arial',
-      fill: 'black'
+      fontFamily: "Arial",
+      fill: "black",
     },
     padding: [11, 11, 11, 11],
   });
@@ -382,8 +457,8 @@ setEngine(engine);
     style: {
       fill: 0xffffff,
       fontSize: 32,
-      fontFamily: 'Arial'
-    }
+      fontFamily: "Arial",
+    },
   });
 
   stopWhenWinText.position.set(autoText.x + autoText.width + 20, autoText.y);
@@ -393,11 +468,10 @@ setEngine(engine);
   inputBalanceWinSprite.height = 50;
   const inputBalanceStopWhenWin = new Input({
     bg: inputBalanceWinSprite,
-    placeholder: 'Infinity',
-    value: '1',
+    placeholder: "1",
     textStyle: {
-      fontFamily: 'Arial',
-      fill: 'black'
+      fontFamily: "Arial",
+      fill: "black",
     },
     padding: [11, 11, 11, 11],
   });
@@ -410,49 +484,65 @@ setEngine(engine);
     style: {
       fill: 0xffffff,
       fontSize: 32,
-      fontFamily: 'Arial'
-    }
+      fontFamily: "Arial",
+    },
   });
 
-  stopWhenLoseText.position.set(stopWhenWinText.x + stopWhenWinText.width + 20, stopWhenWinText.y);
+  stopWhenLoseText.position.set(
+    stopWhenWinText.x + stopWhenWinText.width + 20,
+    stopWhenWinText.y,
+  );
 
   const inputBalanceLoseSprite = Sprite.from(`input_field.png`);
   inputBalanceLoseSprite.width = 100;
   inputBalanceLoseSprite.height = 50;
   const inputBalanceStopWhenLose = new Input({
     bg: inputBalanceLoseSprite,
-    placeholder: 'Infinity',
-    value: '1',
+    placeholder: "1",
     textStyle: {
-      fontFamily: 'Arial',
-      fill: 'black'
+      fontFamily: "Arial",
+      fill: "black",
     },
     padding: [11, 11, 11, 11],
   });
 
-  inputBalanceStopWhenLose.position.set(stopWhenLoseText.x, inputBalanceStopWhenWin.y);
+  inputBalanceStopWhenLose.position.set(
+    stopWhenLoseText.x,
+    inputBalanceStopWhenWin.y,
+  );
 
-  engine.stage.addChild(autoText, inputNumberAuto, stopWhenWinText, inputBalanceStopWhenWin, stopWhenLoseText, inputBalanceStopWhenLose);
+  engine.stage.addChild(
+    autoText,
+    inputNumberAuto,
+    stopWhenWinText,
+    inputBalanceStopWhenWin,
+    stopWhenLoseText,
+    inputBalanceStopWhenLose,
+  );
 
   //#region Start Auto button
   const startAutoButton = new Button({
-    text: 'Start',
+    text: "Start",
     width: 200,
     height: 100,
-    fontSize: 32
+    fontSize: 32,
   });
 
   startAutoButton.anchor.set(0);
-  startAutoButton.position.set(0, inputNumberAuto.y + inputNumberAuto.height * 2);
+  startAutoButton.position.set(
+    0,
+    inputNumberAuto.y + inputNumberAuto.height * 2,
+  );
 
-  const ticker = new Ticker();
-  // Handle start auto event 
+  // Handle start auto event
   startAutoButton.onPress.connect(() => {
-    if (GameStateManager.getInstance().getState() === GameState.BETTING) return;
+    if (GameStateManager.getInstance().getState() === GameState.BETTING) {
+      return;
+    }
 
     updateGameResultText(true);
     if (hasNoSelectedButtons()) {
-      alert('Please select at least 1 square before starting!');
+      alert("Please select at least 1 square before starting!");
       return;
     }
 
@@ -462,19 +552,18 @@ setEngine(engine);
     let autoCount = Number(inputNumberAuto.value);
     let phase: "waiting" | "reveal" | "reset" = "waiting";
 
-
+    const ticker = new Ticker();
+    ticker.start();
     ticker.add((time) => {
-      // if (GameStateManager.getInstance().getState() === GameState.NOT_BETTING) {
-      //   return;
-      // }
+      if (GameStateManager.getInstance().getState() === GameState.NOT_BETTING)
+        return;
+
       autoElapsed += time.elapsedMS / 1000;
 
       if (autoElapsed >= 1) {
         autoElapsed = 0;
 
         if (phase === "waiting") {
-
-
           // Generate matrix
           GetItem.generateMatrix(selectBombs.value + 1);
           // reveal
@@ -482,8 +571,7 @@ setEngine(engine);
           updateProfitText();
           updateBalaceTextAfterAuto();
           phase = "reset";
-        }
-        else if (phase === "reset") {
+        } else if (phase === "reset") {
           // reset after delay
           resetButtonPressedWithoutResetSelected();
           if (!isEnoughBalance(Number(inputBetValue.value))) {
@@ -491,7 +579,6 @@ setEngine(engine);
             ticker.stop();
             return;
           }
-
 
           // Update text balance
           phase = "waiting";
@@ -506,29 +593,31 @@ setEngine(engine);
         }
       }
     });
-
-    ticker.start();
   });
 
-  //#region Start Auto button
+  //#region Stop Auto button
   const stopAutoButton = new Button({
-    text: 'Stop',
+    text: "Stop",
     width: 200,
     height: 100,
-    fontSize: 32
+    fontSize: 32,
   });
 
   stopAutoButton.anchor.set(0, 0);
 
-  stopAutoButton.position.set(startAutoButton.x + startAutoButton.width, startAutoButton.y);
+  stopAutoButton.position.set(
+    startAutoButton.x + startAutoButton.width,
+    startAutoButton.y,
+  );
 
   stopAutoButton.onPress.connect(() => {
-    if (GameStateManager.getInstance().getState() === GameState.NOT_BETTING) return;
+    if (GameStateManager.getInstance().getState() === GameState.NOT_BETTING)
+      return;
 
     GameStateManager.getInstance().setState(GameState.NOT_BETTING);
 
     // Stop ticker
-    ticker.stop();
+    // ticker.stop();
   });
 
   engine.stage.addChild(startAutoButton, stopAutoButton);
@@ -546,12 +635,12 @@ setEngine(engine);
   // boardContainer.pivot.set(boardContainer.width / 2, boardContainer.height / 2);
   const buttonSize = 200;
 
-  // Matrix 
+  // Matrix
   for (let j = 0; j < GlobalConfig.TOTAL_ROWS; j++) {
     const column = new Container();
 
     column.position.set(j * buttonSize, 130);
-    //** Create five buttons*/ 
+    //** Create five buttons*/
     for (let i = 0; i < GlobalConfig.TOTAL_COLUMNS; i++) {
       const button = new Button({ text: "" });
 
@@ -561,7 +650,9 @@ setEngine(engine);
       //#region Square Button
       button.onPress.connect(async () => {
         testAPI();
-        if (GameStateManager.getInstance().getState() == GameState.NOT_BETTING) {
+        if (
+          GameStateManager.getInstance().getState() == GameState.NOT_BETTING
+        ) {
           button.selected = true;
           return;
         }
@@ -574,7 +665,7 @@ setEngine(engine);
         const sprite = Sprite.from("diamon.png");
         sprite.setSize(button.width, button.height);
 
-        let itemType = await GetItem.getItemType(i, j);
+        const itemType = await GetItem.getItemType(i, j);
         if (itemType) {
           button.defaultView = sprite;
           updateProfitText();
@@ -589,7 +680,7 @@ setEngine(engine);
           GameStateManager.getInstance().setState(GameState.NOT_BETTING);
 
           // Enable select bombs combo box
-          selectBombs.eventMode = 'passive';
+          selectBombs.eventMode = "passive";
 
           let count = 0;
           boardContainer.children.forEach((column) => {
@@ -605,8 +696,8 @@ setEngine(engine);
           withdrawButton.visible = false;
           betButton.alpha = 1;
 
-          // 
-          button.defaultView.tint = 'red'; // Set background color to red
+          //
+          button.defaultView.tint = "red"; // Set background color to red
           button.pressed = true;
 
           // Reveal all buttons after hit a bombs
@@ -620,7 +711,6 @@ setEngine(engine);
     }
 
     boardContainer.addChild(column);
-
   }
 
   engine.stage.addChild(boardContainer);
@@ -652,33 +742,39 @@ setEngine(engine);
     }
 
     // Calculate diamon count
-    let diamondCollected = GlobalConfig.TOTAL_ROWS * GlobalConfig.TOTAL_COLUMNS - diamondRemaining - currBombsCount;
-    let coefficient = 1 + diamondCollected * GetCoefficientProfit.getCoefficient(currBombsCount);
-    let totalProfit = coefficient * Number(inputBetValue.value);
+    const diamondCollected =
+      GlobalConfig.TOTAL_ROWS * GlobalConfig.TOTAL_COLUMNS -
+      diamondRemaining -
+      currBombsCount;
+    const coefficient =
+      1 +
+      diamondCollected * GetCoefficientProfit.getCoefficient(currBombsCount);
+    const totalProfit = coefficient * Number(inputBetValue.value);
     profitText.text = `Total profit (${coefficient.toFixed(2)}x): ${totalProfit.toFixed(2)}`;
   }
 
-  // Reveal all the buttons 
+  // Reveal all the buttons
   async function revealAllButtons() {
     boardContainer.children.forEach((column) => {
       column.children.forEach(async (child) => {
         const button = child as Button;
 
-        const [i, j] = [button.parent!.getChildIndex(button), boardContainer.getChildIndex(button.parent!)];
-        let itemType = await GetItem.getItemType(i, j);
+        const [i, j] = [
+          button.parent!.getChildIndex(button),
+          boardContainer.getChildIndex(button.parent!),
+        ];
+        const itemType = await GetItem.getItemType(i, j);
         if (itemType) {
           const sprite = Sprite.from("diamon.png");
           sprite.setSize(buttonSize, buttonSize);
           button.defaultView = sprite;
-        }
-        else {
+        } else {
           const bombSprite = Sprite.from("bomb.png");
           bombSprite.setSize(buttonSize, buttonSize);
           button.defaultView = bombSprite;
         }
         if (button.pressed || button.selected) button.alpha = 1;
         else button.alpha = 0.5;
-
       });
     });
   }
@@ -687,24 +783,33 @@ setEngine(engine);
     boardContainer.children.forEach((column) => {
       column.children.forEach((child) => {
         const button = child as Button;
-        const [i, j] = [button.parent!.getChildIndex(button), boardContainer.getChildIndex(button.parent!)];
+        const [i, j] = [
+          button.parent!.getChildIndex(button),
+          boardContainer.getChildIndex(button.parent!),
+        ];
 
         // Test center button notify win
         if (i === 2 && j === 2) {
           if (reset) {
             // Remove all Text children from the button when resetting
             button.children
-              .filter(child => child instanceof Text)
-              .forEach(child => button.removeChild(child));
+              .filter((child) => child instanceof Text)
+              .forEach((child) => button.removeChild(child));
             return;
           }
 
           // Calculate diamon count
-          let diamondCollected = GlobalConfig.TOTAL_ROWS * GlobalConfig.TOTAL_COLUMNS - diamondRemaining - currBombsCount;
-          let coefficient = 1 + diamondCollected * GetCoefficientProfit.getCoefficient(currBombsCount);
-          let totalProfit = coefficient * Number(inputBetValue.value);
+          const diamondCollected =
+            GlobalConfig.TOTAL_ROWS * GlobalConfig.TOTAL_COLUMNS -
+            diamondRemaining -
+            currBombsCount;
+          const coefficient =
+            1 +
+            diamondCollected *
+            GetCoefficientProfit.getCoefficient(currBombsCount);
+          const totalProfit = coefficient * Number(inputBetValue.value);
 
-          // 
+          //
           const gameResultText = new Text();
           gameResultText.text = `${coefficient.toFixed(2)}x: ${totalProfit.toFixed(2)}`;
           gameResultText.setSize(buttonSize, buttonSize / 5);
@@ -726,25 +831,24 @@ setEngine(engine);
   }
 
   function hasNoPressedButtons(): boolean {
-    return boardContainer.children.every(column =>
-      column.children.every(child => !(child as Button).pressed)
+    return boardContainer.children.every((column) =>
+      column.children.every((child) => !(child as Button).pressed),
     );
   }
 
   function hasNoSelectedButtons(): boolean {
-    return boardContainer.children.every(column =>
-      column.children.every(child => !(child as Button).selected)
+    return boardContainer.children.every((column) =>
+      column.children.every((child) => !(child as Button).selected),
     );
   }
 
   function updateBalaceText(value: number, receive: boolean) {
-    if (receive)
-      balance += value;
+    if (receive) balance += value;
     else {
       balance -= value;
     }
 
-    balanceText.text = `Balance: ${balance.toFixed(2)}`
+    balanceText.text = `Balance: ${balance.toFixed(2)}`;
   }
 
   function isEnoughBalance(value: number): boolean {
@@ -764,7 +868,6 @@ setEngine(engine);
   }
 
   function updateBalaceTextAfterAuto() {
-
     let diamondCollected = 0;
     let bombFlag = false;
 
@@ -772,22 +875,25 @@ setEngine(engine);
       column.children.forEach(async (child) => {
         const button = child as Button;
         if (button.selected) {
-          const [i, j] = [button.parent!.getChildIndex(button), boardContainer.getChildIndex(button.parent!)];
-          let itemType = await GetItem.getItemType(i, j);
+          const [i, j] = [
+            button.parent!.getChildIndex(button),
+            boardContainer.getChildIndex(button.parent!),
+          ];
+          const itemType = await GetItem.getItemType(i, j);
           if (itemType) {
             diamondCollected++;
-          }
-          else {
+          } else {
             bombFlag = true;
           }
         }
       });
     });
 
-    let coefficient = 1 + diamondCollected * GetCoefficientProfit.getCoefficient(currBombsCount);
-    let totalProfit = coefficient * Number(inputBetValue.value);
-    if (!bombFlag)
-      updateBalaceText(totalProfit, true);
+    const coefficient =
+      1 +
+      diamondCollected * GetCoefficientProfit.getCoefficient(currBombsCount);
+    const totalProfit = coefficient * Number(inputBetValue.value);
+    if (!bombFlag) updateBalaceText(totalProfit, true);
   }
 
   async function testAPI() {
@@ -798,6 +904,3 @@ setEngine(engine);
     console.log(data.matrix);
   }
 })();
-
-
-

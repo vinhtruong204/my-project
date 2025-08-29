@@ -60,7 +60,7 @@ export class MainScreen extends Container {
   }
 
   /** Prepare the screen just before showing */
-  public prepare() { }
+  public prepare() {}
 
   /** Update the screen */
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
@@ -81,7 +81,7 @@ export class MainScreen extends Container {
   }
 
   /** Fully reset */
-  public reset() { }
+  public reset() {}
 
   /** Resize the screen, fired whenever window size changes */
   public resize(width: number, height: number) {
@@ -94,17 +94,13 @@ export class MainScreen extends Container {
     this.pauseButton.y = 30;
     this.settingsButton.x = width - 30;
     this.settingsButton.y = 30;
-
   }
 
   /** Show screen with animations */
   public async show(): Promise<void> {
     engine().audio.bgm.play("main/sounds/bgm-main.mp3", { volume: 0.5 });
 
-    const elementsToAnimate = [
-      this.pauseButton,
-      this.settingsButton
-    ];
+    const elementsToAnimate = [this.pauseButton, this.settingsButton];
 
     let finalPromise!: AnimationPlaybackControls;
     for (const element of elementsToAnimate) {
@@ -120,7 +116,7 @@ export class MainScreen extends Container {
   }
 
   /** Hide screen with animations */
-  public async hide() { }
+  public async hide() {}
 
   /** Auto pause the app when window go out of focus */
   public blur() {

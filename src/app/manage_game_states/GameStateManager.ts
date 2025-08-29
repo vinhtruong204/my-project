@@ -1,28 +1,28 @@
 import { GameState } from "./GameState";
 
 export class GameStateManager {
-    private static instance: GameStateManager;
+  private static instance: GameStateManager;
 
-    private currentState: GameState = GameState.NOT_BETTING;
+  private currentState: GameState = GameState.NOT_BETTING;
 
-    private constructor() { }
+  private constructor() {}
 
-    public static getInstance(): GameStateManager {
-        if (!GameStateManager.instance) {
-            GameStateManager.instance = new GameStateManager();
-        }
-        return GameStateManager.instance;
+  public static getInstance(): GameStateManager {
+    if (!GameStateManager.instance) {
+      GameStateManager.instance = new GameStateManager();
     }
+    return GameStateManager.instance;
+  }
 
-    public getState(): GameState {
-        return this.currentState;
-    }
+  public getState(): GameState {
+    return this.currentState;
+  }
 
-    public setState(state: GameState): void {
-        this.currentState = state;
-    }
+  public setState(state: GameState): void {
+    this.currentState = state;
+  }
 
-    public isBetting(): boolean {
-        return this.currentState === GameState.BETTING;
-    }
+  public isBetting(): boolean {
+    return this.currentState === GameState.BETTING;
+  }
 }
