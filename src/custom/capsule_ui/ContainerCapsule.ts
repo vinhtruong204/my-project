@@ -4,7 +4,7 @@ import { CapsuleType } from "./CapsuleType";
 
 export class ContainerCapsule extends Container {
     private capsuleWidth = 500;
-    private capsuleHeight = 100;
+    private capsuleHeight = 70;
     private cornerRadius = this.capsuleHeight / 2;
 
     private rectContainer: Graphics;
