@@ -1,4 +1,4 @@
-import { Color, Container, Graphics, Rectangle, RoundedRectangle, Sprite, Text, Ticker } from "pixi.js";
+import { Color, Container, Sprite, Text, Ticker } from "pixi.js";
 import { setEngine } from "./app/getEngine";
 import { MainScreen } from "./app/screens/main/MainScreen";
 import { userSettings } from "./app/utils/userSettings";
@@ -15,7 +15,7 @@ import { Input, Select } from "@pixi/ui";
 import { GameStateManager } from "./app/manage_game_states/GameStateManager";
 import { GameState } from "./app/manage_game_states/GameState";
 import { GetCoefficientProfit } from "./app/utils/GetCoefficientProfit";
-import { InnerCapsule } from "./custom/InnerCapsule";
+import { ContainerCapsule } from "./custom/capsule_ui/ContainerCapsule";
 // import "@esotericsoftware/spine-pixi-v8";
 
 // Create a new creation engine instance
@@ -84,7 +84,7 @@ setEngine(engine);
   // rect.y = 100;
 
 
-  engine.stage.addChild(new InnerCapsule(100, 100));
+  engine.stage.addChild(new ContainerCapsule(100, 100));
 
 
   //#region  Bet container
