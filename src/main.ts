@@ -16,7 +16,8 @@ import { GameStateManager } from "./app/manage_game_states/GameStateManager";
 import { GameState } from "./app/manage_game_states/GameState";
 import { GetCoefficientProfit } from "./app/utils/GetCoefficientProfit";
 import { ContainerCapsule } from "./custom/capsule_ui/ContainerCapsule";
-import { BetAmount } from "./custom/bet_ui/bet_amount/BetAmount";
+import { LabeledInput } from "./custom/bet_ui/base/LabeledInput";
+import { InputBetAmount } from "./custom/bet_ui/bet_amount/InputBetAmount";
 // import "@esotericsoftware/spine-pixi-v8";
 
 // Create a new creation engine instance
@@ -87,7 +88,10 @@ setEngine(engine);
   const containerCapsule = new ContainerCapsule(100, 50)
   engine.stage.addChild(containerCapsule);
 
-  const betAmount = new BetAmount(containerCapsule.x, containerCapsule.y + containerCapsule.height, 200, 100, "Bet Amount", "00.0$")
+  const betAmount = new LabeledInput(containerCapsule.x, containerCapsule.y + containerCapsule.height, 200, 100, "Bet Amount", "00.0$",
+    new InputBetAmount()
+  );
+
   engine.stage.addChild(betAmount);
 
   //#region  Bet container

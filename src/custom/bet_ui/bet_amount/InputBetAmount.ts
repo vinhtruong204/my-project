@@ -1,24 +1,70 @@
 import { Graphics } from "pixi.js";
-import { CustomInput } from "../base/CustomInput";
+import { CustomInputBase } from "../base/CustomInputBase";
 import { TriangleType } from "../base/TriangleSprite";
+import { FancyButton } from "@pixi/ui";
 
-export class InputBetAmount extends CustomInput {
+const defaultInputFieldSize = {
+    width: 500,
+    height: 50
+}
+
+const defaultButtonSize = {
+    width: 50,
+    height: 50
+}
+
+export class InputBetAmount extends CustomInputBase {
     private betCofig: number[];
     private currentIndex: number = 0;
 
+    // 2 buttons
+    private halfButton: FancyButton;
+    private doubleButton: FancyButton;
     constructor() {
         const inputGraphics = new Graphics()
-            .rect(0, 0, 500, 50)
+            .rect(0, 0, defaultInputFieldSize.width - defaultButtonSize.width * 2, defaultInputFieldSize.height)
             .fill({ color: 'white', alpha: 1 })
             .stroke({ width: 4, color: 'gray', alpha: 1, alignment: 0.5 });
 
         super(inputGraphics, "0000.00");
 
+        // Initial bet config and update value
         this.betCofig = [200, 400, 600, 800, 1000, 2000, 5000, 7500, 10000];
-        this.updateValue();
+        this.updateValue(this.betCofig[this.currentIndex]);
 
-        // Handle change event
+        // Initial buttons
+        this.halfButton = new FancyButton({
+            defaultView: this.getButtonDefaultView(),
+            text: '1/2'
+        });
+
+        this.doubleButton = new FancyButton({
+            defaultView: this.getButtonDefaultView(),
+            text: '2x'
+        });
+
+        // Adjust position of the buttons
+        this.doubleButton.position.set(defaultInputFieldSize.width - defaultButtonSize.width, 0);
+        this.halfButton.position.set(this.doubleButton.x - defaultButtonSize.width, 0);
+
+        this.addChild(this.halfButton, this.doubleButton);
+
+        // Handle request change value event
         this.onRequestValueChange = this.handleValueChange.bind(this);
+
+        // Handle buttons event
+        this.halfButton.onpointerdown = this.handleHalfButtonClicked.bind(this);
+        this.doubleButton.onpointerdown = this.handleDoubleButtonClicked.bind(this);
+    }
+
+    private handleHalfButtonClicked() {
+        let currentValue = Number(this.value);
+        this.updateValue(currentValue / 2);
+    }
+
+    private handleDoubleButtonClicked() {
+        let currentValue = Number(this.value);
+        this.updateValue(currentValue * 2);
     }
 
     private handleValueChange(triangleType: TriangleType) {
@@ -28,10 +74,17 @@ export class InputBetAmount extends CustomInput {
                 : ++this.currentIndex;
         else
             this.currentIndex = this.currentIndex - 1 < 0 ? 0 : --this.currentIndex;
-        this.updateValue();
+        this.updateValue(this.betCofig[this.currentIndex]);
     }
 
-    private updateValue() {
-        this.value = String(this.betCofig[this.currentIndex]);
+    private updateValue(newValue: number) {
+        this.value = String(newValue.toFixed(2));
+    }
+
+    private getButtonDefaultView(): Graphics {
+        return new Graphics()
+            .rect(0, 0, defaultButtonSize.width, defaultButtonSize.height)
+            .fill('white')
+            .stroke({ width: 4, color: 'gray', alignment: 0.5 });
     }
 }

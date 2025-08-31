@@ -5,7 +5,7 @@ import { TriangleSprite, TriangleType } from "./TriangleSprite";
 type ViewType = Sprite | Graphics | Texture | string;
 
 //**This class contain a input field and two triangles to modify value */
-export class CustomInput extends Input {
+export class CustomInputBase extends Input {
     // Two triangles
     private upTriangle: TriangleSprite;
     private downTriangle: TriangleSprite;

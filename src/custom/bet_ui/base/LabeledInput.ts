@@ -1,13 +1,12 @@
-import { Container, Graphics, Text } from "pixi.js";
-import { CustomInput } from "../base/CustomInput";
-import { InputBetAmount } from "./InputBetAmount";
+import { Container, Text } from "pixi.js";
+import { CustomInputBase } from "./CustomInputBase";
 
 //**This class contain input field and label text */
-export class BetAmount extends Container {
+export class LabeledInput extends Container {
     private leftLabel: Text;
     private rightLabel: Text;
 
-    private inputAmount: CustomInput;
+    private inputAmount: CustomInputBase;
 
     constructor(
         x: number,
@@ -15,9 +14,12 @@ export class BetAmount extends Container {
         width: number,
         height: number,
         leftLabel: string,
-        rightLabel: string
+        rightLabel: string,
+        inputAmount: CustomInputBase
     ) {
         super({ x: x, y: y, width: width, height: height });
+
+        this.inputAmount = inputAmount;
 
         // Initial left label
         this.leftLabel = new Text({
@@ -41,7 +43,6 @@ export class BetAmount extends Container {
         });
 
         // Input
-        this.inputAmount = new InputBetAmount();
 
         this.adjustPosition();
 
