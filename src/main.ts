@@ -84,7 +84,7 @@ setEngine(engine);
   // rect.y = 100;
 
 
-  engine.stage.addChild(new ContainerCapsule(100, 100));
+  engine.stage.addChild(new ContainerCapsule(100, 50));
 
 
   //#region  Bet container

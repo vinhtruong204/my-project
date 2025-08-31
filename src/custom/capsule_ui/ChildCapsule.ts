@@ -2,27 +2,33 @@ import { Container, Graphics, Text } from "pixi.js";
 import { CapsuleType } from "./CapsuleType";
 
 export class ChildCapsule extends Container {
-    // private selected: boolean = false;
+    private selected: boolean = false;
+    private hover: boolean = false;
 
     // UI
     private capsule: Graphics;
     private textUI: Text;
 
     // Type of child capsule
-    private capsuletype: CapsuleType;
+    private capsuleType: CapsuleType;
+
+    // Callback
+    public onSelected?: (capsule: ChildCapsule) => void;
 
     constructor(x: number, y: number, width: number, height: number, capsuleType: CapsuleType) {
         super({ x: x, y: y, width: width, height: height });
 
-        this.capsuletype = capsuleType;
+        this.capsuleType = capsuleType;
+
+        this.alpha = 0.5;
 
         this.capsule = new Graphics()
             .roundRect(0, 0, width, height, height / 2)
-            .fill({ color: 'green', alpha: 0.5 })
+            .fill({ color: 'green', alpha: 1 })
             .stroke({ width: 5, color: 'white', alignment: 0.5 });
 
         this.textUI = new Text({
-            text: this.capsuletype,
+            text: this.capsuleType,
             style: {
                 fontSize: 32,
                 fontFamily: "Arial",
@@ -46,18 +52,48 @@ export class ChildCapsule extends Container {
     }
 
     private handleOnDown() {
-        console.log("clicked");
+        if (this.selected) return;
+
+        // console.log("clicked");
+        this.selected = true;
+
+        this.onSelected?.(this);
+
+        this.updateVisuals();
     }
-    
+
     private handleOnEnter() {
-        console.log("enter");
-    }
+        // console.log("enter");
+        this.hover = true;
+        this.updateVisuals();
+    };
 
     private handleOnLeave() {
-        console.log("leave");
+        // console.log("leave");
+
+        this.hover = false;
+        this.updateVisuals();
+    };
+
+    private updateVisuals() {
+        if (this.selected) {
+            this.alpha = 1;
+        }
+        else if (this.hover) {
+            this.alpha = 0.75;
+        }
+        else {
+            this.alpha = 0.5;
+        }
     }
 
+    public setSelected(value: boolean) {
+        this.selected = value;
+        this.updateVisuals();
+    }
 
-
+    public getCapsuleType(): CapsuleType {
+        return this.capsuleType;
+    }
 
 }
