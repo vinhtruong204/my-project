@@ -16,8 +16,8 @@ import { GameStateManager } from "./app/manage_game_states/GameStateManager";
 import { GameState } from "./app/manage_game_states/GameState";
 import { GetCoefficientProfit } from "./app/utils/GetCoefficientProfit";
 import { ContainerCapsule } from "./custom/capsule_ui/ContainerCapsule";
-import { LabeledInput } from "./custom/bet_ui/base/LabeledInput";
-import { InputBetAmount } from "./custom/bet_ui/bet_amount/InputBetAmount";
+import { ManualBetContainer } from "./custom/bet_ui/container/ManualBetContainer";
+import { UIManager } from "./custom/manager_ui/UIManager";
 // import "@esotericsoftware/spine-pixi-v8";
 
 // Create a new creation engine instance
@@ -49,59 +49,11 @@ setEngine(engine);
 
 
   //#region Capsule
-  // const capsuleWidth = 500;
-  // const capsuleHeight = 100;
-  // const cornerRadius = capsuleHeight / 2;
 
-  // const rect = new Graphics()
-  //   .roundRect(0, 0, capsuleWidth, capsuleHeight, cornerRadius)
-  //   .fill({ color: 'gray', alpha: 0.75 })
-  //   .stroke({ width: 5, color: 'white', alignment: 0.5 });
+  const uiManager = new UIManager(100, 50);
+  engine.stage.addChild(uiManager);
 
-  // const childRect = new Graphics()
-  //   .roundRect(0, 0, capsuleWidth / 2, capsuleHeight, cornerRadius)
-  //   .fill({ color: 'green', alpha: 0.5 })
-  //   .stroke({ width: 5, color: 'white', alignment: 0.5 });
-  // rect.addChild(childRect);
-
-
-
-  // const textManual = new Text({
-  //   text: "Manual",
-  //   style: {
-  //     fontSize: 32,
-  //     fontFamily: "Arial",
-  //     align: 'center',
-  //     fill: '0x000000'
-  //   }
-  // });
-
-  // textManual.anchor = 0.5;
-  // textManual.position.set(childRect.width / 2, childRect.height / 2);
-
-  // childRect.addChild(textManual);
-
-  // rect.addChild(childRect);
-  // rect.x = 100;
-  // rect.y = 100;
-
-  const containerCapsule = new ContainerCapsule(100, 50)
-  engine.stage.addChild(containerCapsule);
-
-  const betAmount = new LabeledInput(containerCapsule.x, containerCapsule.y + containerCapsule.height, 200, 100, "Bet Amount", "00.0$",
-    new InputBetAmount()
-  );
-
-  engine.stage.addChild(betAmount);
-
-  //#region  Bet container
-  // const betContainer = new Container({
-  //   layout: {
-  //     alignContent: 'center',
-  //     marginLeft: 0
-  //   }
-  // });
-
+  //----------------------------------------------------------------------------------
   const betText = new Text({
     text: "Bet value",
     style: {
@@ -427,7 +379,7 @@ setEngine(engine);
     updateGameResultText();
   });
 
-  engine.stage.addChild(inforText, profitText, withdrawButton);
+  // engine.stage.addChild(inforText, profitText, withdrawButton);
 
   //#endregion
 
@@ -519,14 +471,14 @@ setEngine(engine);
     inputBalanceStopWhenWin.y,
   );
 
-  engine.stage.addChild(
-    autoText,
-    inputNumberAuto,
-    stopWhenWinText,
-    inputBalanceStopWhenWin,
-    stopWhenLoseText,
-    inputBalanceStopWhenLose,
-  );
+  // engine.stage.addChild(
+  //   autoText,
+  //   inputNumberAuto,
+  //   stopWhenWinText,
+  //   inputBalanceStopWhenWin,
+  //   stopWhenLoseText,
+  //   inputBalanceStopWhenLose,
+  // );
 
   //#region Start Auto button
   const startAutoButton = new Button({
@@ -628,7 +580,7 @@ setEngine(engine);
     // ticker.stop();
   });
 
-  engine.stage.addChild(startAutoButton, stopAutoButton);
+  // engine.stage.addChild(startAutoButton, stopAutoButton);
 
   //#endregion
 
