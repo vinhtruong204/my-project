@@ -20,6 +20,7 @@ function makeBGSprite(path: string): Sprite {
 
 export class SelectMines extends Select {
     private leftLabel: Text;
+    // private mineCount: number = 1;
 
     constructor(x: number, y: number) {
         super({
@@ -35,7 +36,7 @@ export class SelectMines extends Select {
             },
             scrollBox: {
                 width: 500,
-                height: 350,
+                height: 345,
                 radius: 25,
             },
         });

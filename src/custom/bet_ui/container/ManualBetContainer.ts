@@ -1,22 +1,11 @@
-import { Container } from "pixi.js"
-import { LabeledInput } from "../base/LabeledInput";
-import { InputBetAmount } from "../bet_amount/InputBetAmount";
-import { SelectMines } from "../mines_ui/SelectMines";
 import { Button } from "../../../app/ui/Button";
+import { BetContainer } from "./BetContainer";
 
-export class ManualBetContainer extends Container {
-    private betAmount: LabeledInput;
-    private selectMines: SelectMines;
+export class ManualBetContainer extends BetContainer {
     private betButton: Button;
 
     constructor(x: number, y: number) {
-        super({ x: x, y: y });
-
-        this.betAmount = new LabeledInput(0, 0, 200, 100, "Bet Amount", "00.0$",
-            new InputBetAmount()
-        );
-
-        this.selectMines = new SelectMines(this.betAmount.x, this.betAmount.y + this.betAmount.height);
+        super(x, y);
 
         this.betButton = new Button({
             text: 'Bet',
@@ -27,6 +16,6 @@ export class ManualBetContainer extends Container {
 
         this.betButton.position.set(this.selectMines.width / 2, this.selectMines.y + this.selectMines.height + 4);
 
-        this.addChild(this.betAmount, this.selectMines, this.betButton);
+        this.addChild(this.betButton);
     }
 }

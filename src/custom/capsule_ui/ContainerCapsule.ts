@@ -14,6 +14,8 @@ export class ContainerCapsule extends Container {
 
     private selectedChild: ChildCapsule | null = null;
 
+    public onUIChange?: (capsuleType: CapsuleType | null) => void;
+
     constructor(x: number, y: number) {
         super({ x: x, y: y });
 
@@ -45,6 +47,7 @@ export class ContainerCapsule extends Container {
 
         // Choose manual first
         this.handleSelection(this.leftChild);
+
     }
 
     private handleSelection(capsule: ChildCapsule) {
@@ -56,6 +59,9 @@ export class ContainerCapsule extends Container {
         // Update selected child
         this.selectedChild = capsule;
         this.selectedChild.setSelected(true);
+
+        // Raise event
+        this.onUIChange?.(this.getSelectedType());
     }
 
     public getSelectedType(): CapsuleType | null {

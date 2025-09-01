@@ -54,4 +54,8 @@ export class LabeledInput extends Container {
 
         this.rightLabel.position.set(this.inputAmount.width - this.rightLabel.width, 0);
     }
+
+    public getInputAmount(): CustomInputBase {
+        return this.inputAmount;
+    }
 }
