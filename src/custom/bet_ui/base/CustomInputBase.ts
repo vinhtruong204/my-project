@@ -23,8 +23,8 @@ export class CustomInputBase extends Input {
         this.onChange.connect(this.handleInputChange.bind(this));
 
         // Handle hover and leave event
-        this.onpointerenter = this.handleOnPointerEnter;
-        this.onpointerleave = this.handleOnPointerLeave;
+        this.onpointerenter = this.handleOnPointerEnter.bind(this);
+        this.onpointerleave = this.handleOnPointerLeave.bind(this);
 
         // Initial triangle
         this.upTriangle = new TriangleSprite(TriangleType.UP);

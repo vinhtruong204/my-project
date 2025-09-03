@@ -1,5 +1,5 @@
-import { Button } from "../../../app/ui/Button";
-import { BetContainer } from "./BetContainer";
+import { Button } from "../../../../app/ui/Button";
+import { BetContainer } from "../BetContainer";
 
 export class AutoBetContainer extends BetContainer {
     private autoBetButton: Button;

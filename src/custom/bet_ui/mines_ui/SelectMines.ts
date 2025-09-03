@@ -58,5 +58,7 @@ export class SelectMines extends Select {
         this.leftLabel.position.y = 0 - this.leftLabel.height;
 
         this.addChild(this.leftLabel);
+
+        this.value = 0;
     }
 }

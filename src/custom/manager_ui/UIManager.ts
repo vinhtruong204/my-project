@@ -1,7 +1,7 @@
 import { Container } from "pixi.js";
 import { ContainerCapsule } from "../capsule_ui/ContainerCapsule";
-import { ManualBetContainer } from "../bet_ui/container/ManualBetContainer";
-import { AutoBetContainer } from "../bet_ui/container/AutoBetContainer";
+import { ManualBetContainer } from "../bet_ui/container/manual_bet/ManualBetContainer";
+import { AutoBetContainer } from "../bet_ui/container/auto_bet/AutoBetContainer";
 import { CapsuleType } from "../capsule_ui/CapsuleType";
 
 //**This class will manage visible of two types UI (Manual and Auto) */

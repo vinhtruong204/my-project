@@ -58,4 +58,8 @@ export class LabeledInput extends Container {
     public getInputAmount(): CustomInputBase {
         return this.inputAmount;
     }
+
+    public setInputAmountText(value: string) {
+        this.inputAmount.value = value;
+    }
 }
