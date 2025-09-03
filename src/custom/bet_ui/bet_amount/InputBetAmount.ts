@@ -50,7 +50,7 @@ export class InputBetAmount extends CustomInputBase {
         this.addChild(this.halfButton, this.doubleButton);
 
         // Handle request change value event
-        this.onRequestValueChange = this.handleValueChange.bind(this);
+        this.onRequestValueChange = this.onValueChange.bind(this);
 
         // Handle buttons event
         this.halfButton.onpointerdown = this.handleHalfButtonClicked.bind(this);
@@ -67,7 +67,7 @@ export class InputBetAmount extends CustomInputBase {
         this.updateValue(currentValue * 2);
     }
 
-    private handleValueChange(triangleType: TriangleType) {
+    private onValueChange(triangleType: TriangleType) {
         if (triangleType === TriangleType.UP)
             this.currentIndex = this.currentIndex + 1 >= this.betCofig.length
                 ? this.betCofig.length - 1

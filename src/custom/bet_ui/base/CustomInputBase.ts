@@ -11,6 +11,7 @@ export class CustomInputBase extends Input {
     private downTriangle: TriangleSprite;
 
     public onRequestValueChange?: (triangleType: TriangleType) => void;
+    public onTypeRequestValueChange?: (value: string) => void;
 
     constructor(bg: ViewType, placeholder: string) {
         super({
@@ -44,6 +45,7 @@ export class CustomInputBase extends Input {
     private handleInputChange(text: string) {
         const cleaned = text.replace(/\D/g, "");
         if (cleaned !== text) this.value = cleaned;
+        this.onTypeRequestValueChange?.(this.value);
     }
 
     private handleOnPointerEnter() {

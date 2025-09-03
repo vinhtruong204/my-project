@@ -15,8 +15,6 @@ import { Input, Select } from "@pixi/ui";
 import { GameStateManager } from "./app/manage_game_states/GameStateManager";
 import { GameState } from "./app/manage_game_states/GameState";
 import { GetCoefficientProfit } from "./app/utils/GetCoefficientProfit";
-import { ContainerCapsule } from "./custom/capsule_ui/ContainerCapsule";
-import { ManualBetContainer } from "./custom/bet_ui/container/manual_bet/ManualBetContainer";
 import { UIManager } from "./custom/manager_ui/UIManager";
 // import "@esotericsoftware/spine-pixi-v8";
 
