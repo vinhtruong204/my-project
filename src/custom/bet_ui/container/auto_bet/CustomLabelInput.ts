@@ -17,6 +17,7 @@ const defaultButtonSize = {
 const MAX_VALUE = 100;
 const MIN_VALUE = 0;
 
+//**Custom input percent for autoplay */
 export class CustomLabelInput extends LabeledInput {
     private resetButton: Button;
     private increaseButton: Button;

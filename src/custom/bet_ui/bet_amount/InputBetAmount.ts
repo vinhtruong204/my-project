@@ -87,4 +87,8 @@ export class InputBetAmount extends CustomInputBase {
             .fill('white')
             .stroke({ width: 4, color: 'gray', alignment: 0.5 });
     }
+
+    public getBetConfig() {
+        return this.betCofig;
+    }
 }
