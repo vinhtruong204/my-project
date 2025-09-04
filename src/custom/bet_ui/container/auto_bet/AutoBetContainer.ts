@@ -13,6 +13,7 @@ export class AutoBetContainer extends BetContainer {
     private inputNumberOfGames: InputNumberOfGames;
 
     private onWinLabelInput: CustomLabelInput;
+    private onLoseLabelInput: CustomLabelInput;
 
     constructor(x: number, y: number) {
         super(x, y);
@@ -43,13 +44,16 @@ export class AutoBetContainer extends BetContainer {
         this.autoBetButton.position.set(this.numberOfGames.width / 2, this.numberOfGames.y + this.numberOfGames.height + 4);
 
         // Input percent on win
-        this.onWinLabelInput = new CustomLabelInput(0, 0, 'On Win', '');
+        this.onWinLabelInput = new CustomLabelInput(this.numberOfGames.x, this.numberOfGames.y + this.numberOfGames.height, 'On Win (%)', '');
+
+        // Input percent on lose
+        this.onLoseLabelInput = new CustomLabelInput(this.onWinLabelInput.x, this.onWinLabelInput.y + this.onWinLabelInput.height, 'On Lose (%)', '');
 
         // Hide auto container when start game
         this.visible = false;
 
         // this.addChild(this.numberOfGames, this.autoBetButton);
-        this.addChild(this.numberOfGames, this.onWinLabelInput);
+        this.addChild(this.numberOfGames, this.onWinLabelInput, this.onLoseLabelInput);
     }
 
     private onValueChange(value: string) {

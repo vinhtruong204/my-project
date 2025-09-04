@@ -60,7 +60,7 @@ export class Button extends FancyButton {
     super({
       defaultView: "button.png",
       nineSliceSprite: [38, 50, 38, 50],
-      anchor: 0.5,
+      anchor: 0,
       text: new Label({
         text: opts.text,
         style: {

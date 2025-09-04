@@ -3,10 +3,10 @@ import { CustomInputBase } from "./CustomInputBase";
 
 //**This class contain input field and label text */
 export class LabeledInput extends Container {
-    private leftLabel: Text;
-    private rightLabel: Text;
+    protected leftLabel: Text;
+    protected rightLabel: Text;
 
-    private inputAmount: CustomInputBase;
+    protected inputAmount: CustomInputBase;
 
     constructor(
         x: number,
