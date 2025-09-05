@@ -1,6 +1,9 @@
 import { Graphics } from "pixi.js";
 import { CustomInputBase } from "../../base/CustomInputBase";
 import { TriangleType } from "../../base/TriangleSprite";
+import { globalEmitter } from "../../../events/GlobalEmitter";
+import { GameState } from "../../../_game/manage_game_states/GameState";
+import { GameStateEvent } from "../../../events/GameStateEvent";
 
 const MAX_NUMBER_OF_GAMES = 999999999;
 
@@ -18,6 +21,8 @@ export class InputNumberOfGames extends CustomInputBase {
             .stroke({ width: 4, color: 'gray', alpha: 1, alignment: 0.5 });
         super(inputFieldGraphics, '0');
 
+        globalEmitter.on(GameStateEvent.STATE_CHANGE, this.onGameStateChange.bind(this));
+
         // Handle value change event
         this.onRequestValueChange = this.onValueChange.bind(this);
     }
@@ -29,5 +34,15 @@ export class InputNumberOfGames extends CustomInputBase {
             this.value = String(currentValue - 1 < 0 ? 0 : --currentValue);
         else
             this.value = String(currentValue + 1 > MAX_NUMBER_OF_GAMES ? MAX_NUMBER_OF_GAMES : ++currentValue);
+    }
+
+    private onGameStateChange(state: GameState) {
+        if (state === GameState.BETTING) {
+            this.interactive = false;
+            this.interactiveChildren = false;
+        } else {
+            this.interactive = true;
+            this.interactiveChildren = true;
+        }
     }
 }

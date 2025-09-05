@@ -1,5 +1,8 @@
 import { Container, Text } from "pixi.js";
 import { CustomInputBase } from "./CustomInputBase";
+import { globalEmitter } from "../../events/GlobalEmitter";
+import { GameStateEvent } from "../../events/GameStateEvent";
+import { GameState } from "../../_game/manage_game_states/GameState";
 
 //**This class contain input field and label text */
 export class LabeledInput extends Container {
@@ -18,6 +21,8 @@ export class LabeledInput extends Container {
         inputAmount: CustomInputBase
     ) {
         super({ x: x, y: y, width: width, height: height });
+
+        globalEmitter.on(GameStateEvent.STATE_CHANGE, this.onGameStateChange.bind(this));
 
         this.inputAmount = inputAmount;
 
@@ -61,5 +66,15 @@ export class LabeledInput extends Container {
 
     public setInputAmountText(value: string) {
         this.inputAmount.value = value;
+    }
+
+    private onGameStateChange(state: GameState) {
+        if (state === GameState.BETTING) {
+            this.interactive = false;
+            this.interactiveChildren = false;
+        } else {
+            this.interactive = true;
+            this.interactiveChildren = true;
+        }
     }
 }

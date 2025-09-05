@@ -5,6 +5,8 @@ import { CustomLabelInput } from "./CustomLabelInput";
 import { InputNumberOfGames } from "./InputNumberOfGames";
 import { CustomInputStopAuto } from "./CustomInputStopAuto";
 import { InputBetAmount } from "../../bet_amount/InputBetAmount";
+import { GameStateManager } from "../../../_game/manage_game_states/GameStateManager";
+import { GameState } from "../../../_game/manage_game_states/GameState";
 
 const MAX_NUMBER_OF_GAMES = 999999999;
 
@@ -15,7 +17,6 @@ const defaultButtonSize = {
 
 export class AutoBetContainer extends BetContainer {
     private numberOfGames: LabeledInput;
-
     private inputNumberOfGames: InputNumberOfGames;
 
     private onWinLabelInput: CustomLabelInput;
@@ -65,6 +66,7 @@ export class AutoBetContainer extends BetContainer {
         });
         this.startAutoplay.anchor.set(0.5, 0.5);
         this.startAutoplay.position.set(this.labelLoss.width / 2, this.labelLoss.y + this.labelLoss.height + 50);
+        this.startAutoplay.onPress.connect(this.onStartAutoplay.bind(this));
 
         this.addChild(this.numberOfGames, this.onWinLabelInput, this.onLoseLabelInput, this.labelNetGain, this.labelLoss, this.startAutoplay);
     }
@@ -72,4 +74,16 @@ export class AutoBetContainer extends BetContainer {
     private onValueChange(value: string) {
         this.inputNumberOfGames.value = Number(value) > MAX_NUMBER_OF_GAMES ? String(MAX_NUMBER_OF_GAMES) : value;
     }
+
+    private onStartAutoplay() {
+        if (this.startAutoplay.text === 'Start Autoplay') {
+            GameStateManager.getInstance().setState(GameState.BETTING);
+            this.startAutoplay.text = 'Stop Autoplay';
+        }
+        else {
+            GameStateManager.getInstance().setState(GameState.NOT_BETTING);
+            this.startAutoplay.text = 'Start Autoplay';
+        }
+    }
+
 }

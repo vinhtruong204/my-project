@@ -790,6 +790,111 @@
             },
             "transformData": {}
         },
+        "D:/Work/my-project/raw-assets/preload{m}/diamond.png": {
+            "isFolder": false,
+            "parent": "D:/Work/my-project/raw-assets/preload{m}",
+            "metaData": {},
+            "inheritedMetaData": {
+                "m": true
+            },
+            "transformData": {},
+            "stats": {
+                "date": 1757043885161,
+                "duration": 423.62160000001313,
+                "success": true
+            },
+            "hash": "01QI_A"
+        },
+        ".assetpack/mipmap/preload{m}/diamond.png": {
+            "isFolder": false,
+            "transformParent": "D:/Work/my-project/raw-assets/preload{m}/diamond.png",
+            "metaData": {},
+            "inheritedMetaData": {
+                "m": true
+            },
+            "transformData": {}
+        },
+        ".assetpack/compress/preload{m}/diamond.png": {
+            "isFolder": false,
+            "transformParent": ".assetpack/mipmap/preload{m}/diamond.png",
+            "metaData": {},
+            "inheritedMetaData": {
+                "m": true
+            },
+            "transformData": {}
+        },
+        "D:/Work/my-project/public/assets/preload/diamond.png": {
+            "isFolder": false,
+            "transformParent": ".assetpack/compress/preload{m}/diamond.png",
+            "metaData": {},
+            "inheritedMetaData": {
+                "m": true
+            },
+            "transformData": {}
+        },
+        ".assetpack/compress/preload{m}/diamond.webp": {
+            "isFolder": false,
+            "transformParent": ".assetpack/mipmap/preload{m}/diamond.png",
+            "metaData": {},
+            "inheritedMetaData": {
+                "m": true
+            },
+            "transformData": {}
+        },
+        "D:/Work/my-project/public/assets/preload/diamond.webp": {
+            "isFolder": false,
+            "transformParent": ".assetpack/compress/preload{m}/diamond.webp",
+            "metaData": {},
+            "inheritedMetaData": {
+                "m": true
+            },
+            "transformData": {}
+        },
+        ".assetpack/mipmap/preload{m}/diamond@0.5x.png": {
+            "isFolder": false,
+            "transformParent": "D:/Work/my-project/raw-assets/preload{m}/diamond.png",
+            "metaData": {},
+            "inheritedMetaData": {
+                "m": true
+            },
+            "transformData": {}
+        },
+        ".assetpack/compress/preload{m}/diamond@0.5x.png": {
+            "isFolder": false,
+            "transformParent": ".assetpack/mipmap/preload{m}/diamond@0.5x.png",
+            "metaData": {},
+            "inheritedMetaData": {
+                "m": true
+            },
+            "transformData": {}
+        },
+        "D:/Work/my-project/public/assets/preload/diamond@0.5x.png": {
+            "isFolder": false,
+            "transformParent": ".assetpack/compress/preload{m}/diamond@0.5x.png",
+            "metaData": {},
+            "inheritedMetaData": {
+                "m": true
+            },
+            "transformData": {}
+        },
+        ".assetpack/compress/preload{m}/diamond@0.5x.webp": {
+            "isFolder": false,
+            "transformParent": ".assetpack/mipmap/preload{m}/diamond@0.5x.png",
+            "metaData": {},
+            "inheritedMetaData": {
+                "m": true
+            },
+            "transformData": {}
+        },
+        "D:/Work/my-project/public/assets/preload/diamond@0.5x.webp": {
+            "isFolder": false,
+            "transformParent": ".assetpack/compress/preload{m}/diamond@0.5x.webp",
+            "metaData": {},
+            "inheritedMetaData": {
+                "m": true
+            },
+            "transformData": {}
+        },
         "D:/Work/my-project/raw-assets/preload{m}/green_wall.jpg": {
             "isFolder": false,
             "parent": "D:/Work/my-project/raw-assets/preload{m}",
@@ -1228,111 +1333,6 @@
         "D:/Work/my-project/public/assets/preload/triangle@0.5x.webp": {
             "isFolder": false,
             "transformParent": ".assetpack/compress/preload{m}/triangle@0.5x.webp",
-            "metaData": {},
-            "inheritedMetaData": {
-                "m": true
-            },
-            "transformData": {}
-        },
-        "D:/Work/my-project/raw-assets/preload{m}/diamond.png": {
-            "isFolder": false,
-            "parent": "D:/Work/my-project/raw-assets/preload{m}",
-            "metaData": {},
-            "inheritedMetaData": {
-                "m": true
-            },
-            "transformData": {},
-            "stats": {
-                "date": 1757043885161,
-                "duration": 423.62160000001313,
-                "success": true
-            },
-            "hash": "01QI_A"
-        },
-        ".assetpack/mipmap/preload{m}/diamond.png": {
-            "isFolder": false,
-            "transformParent": "D:/Work/my-project/raw-assets/preload{m}/diamond.png",
-            "metaData": {},
-            "inheritedMetaData": {
-                "m": true
-            },
-            "transformData": {}
-        },
-        ".assetpack/compress/preload{m}/diamond.png": {
-            "isFolder": false,
-            "transformParent": ".assetpack/mipmap/preload{m}/diamond.png",
-            "metaData": {},
-            "inheritedMetaData": {
-                "m": true
-            },
-            "transformData": {}
-        },
-        "D:/Work/my-project/public/assets/preload/diamond.png": {
-            "isFolder": false,
-            "transformParent": ".assetpack/compress/preload{m}/diamond.png",
-            "metaData": {},
-            "inheritedMetaData": {
-                "m": true
-            },
-            "transformData": {}
-        },
-        ".assetpack/compress/preload{m}/diamond.webp": {
-            "isFolder": false,
-            "transformParent": ".assetpack/mipmap/preload{m}/diamond.png",
-            "metaData": {},
-            "inheritedMetaData": {
-                "m": true
-            },
-            "transformData": {}
-        },
-        "D:/Work/my-project/public/assets/preload/diamond.webp": {
-            "isFolder": false,
-            "transformParent": ".assetpack/compress/preload{m}/diamond.webp",
-            "metaData": {},
-            "inheritedMetaData": {
-                "m": true
-            },
-            "transformData": {}
-        },
-        ".assetpack/mipmap/preload{m}/diamond@0.5x.png": {
-            "isFolder": false,
-            "transformParent": "D:/Work/my-project/raw-assets/preload{m}/diamond.png",
-            "metaData": {},
-            "inheritedMetaData": {
-                "m": true
-            },
-            "transformData": {}
-        },
-        ".assetpack/compress/preload{m}/diamond@0.5x.png": {
-            "isFolder": false,
-            "transformParent": ".assetpack/mipmap/preload{m}/diamond@0.5x.png",
-            "metaData": {},
-            "inheritedMetaData": {
-                "m": true
-            },
-            "transformData": {}
-        },
-        "D:/Work/my-project/public/assets/preload/diamond@0.5x.png": {
-            "isFolder": false,
-            "transformParent": ".assetpack/compress/preload{m}/diamond@0.5x.png",
-            "metaData": {},
-            "inheritedMetaData": {
-                "m": true
-            },
-            "transformData": {}
-        },
-        ".assetpack/compress/preload{m}/diamond@0.5x.webp": {
-            "isFolder": false,
-            "transformParent": ".assetpack/mipmap/preload{m}/diamond@0.5x.png",
-            "metaData": {},
-            "inheritedMetaData": {
-                "m": true
-            },
-            "transformData": {}
-        },
-        "D:/Work/my-project/public/assets/preload/diamond@0.5x.webp": {
-            "isFolder": false,
-            "transformParent": ".assetpack/compress/preload{m}/diamond@0.5x.webp",
             "metaData": {},
             "inheritedMetaData": {
                 "m": true

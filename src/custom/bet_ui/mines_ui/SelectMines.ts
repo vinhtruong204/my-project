@@ -1,5 +1,8 @@
 import { Select } from "@pixi/ui";
 import { Sprite, Text } from "pixi.js";
+import { GameState } from "../../_game/manage_game_states/GameState";
+import { GameStateEvent } from "../../events/GameStateEvent";
+import { globalEmitter } from "../../events/GlobalEmitter";
 
 const items: string[] = [
     "1", "2", "3", "4", "5",
@@ -41,6 +44,8 @@ export class SelectMines extends Select {
             },
         });
 
+        globalEmitter.on(GameStateEvent.STATE_CHANGE, this.onGameStateChange.bind(this));
+
         // Change z index to bring to front 
         this.zIndex = 10;
 
@@ -60,5 +65,15 @@ export class SelectMines extends Select {
         this.addChild(this.leftLabel);
 
         this.value = 0;
+    }
+
+    private onGameStateChange(state: GameState) {
+        if (state === GameState.BETTING) {
+            this.interactive = false;
+            this.interactiveChildren = false;
+        } else {
+            this.interactive = true;
+            this.interactiveChildren = true;
+        }
     }
 }

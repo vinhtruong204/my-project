@@ -1,6 +1,9 @@
 import { Container, Graphics } from "pixi.js";
 import { ChildCapsule } from "./ChildCapsule";
 import { CapsuleType } from "./CapsuleType";
+import { globalEmitter } from "../events/GlobalEmitter";
+import { GameStateEvent } from "../events/GameStateEvent";
+import { GameState } from "../_game/manage_game_states/GameState";
 
 export class ContainerCapsule extends Container {
     private capsuleWidth = 500;
@@ -18,6 +21,8 @@ export class ContainerCapsule extends Container {
 
     constructor(x: number, y: number) {
         super({ x: x, y: y });
+
+        globalEmitter.on(GameStateEvent.STATE_CHANGE, this.onGameStateChange.bind(this));
 
         this.width = this.capsuleWidth;
         this.height = this.capsuleHeight;
@@ -66,5 +71,15 @@ export class ContainerCapsule extends Container {
 
     public getSelectedType(): CapsuleType | null {
         return this.selectedChild ? this.selectedChild.getCapsuleType() : null;
+    }
+
+    private onGameStateChange(state: GameState) {
+        if (state === GameState.BETTING) {
+            this.interactive = false;
+            this.interactiveChildren = false;
+        } else {
+            this.interactive = true;
+            this.interactiveChildren = true;
+        }
     }
 }

@@ -21,8 +21,8 @@ export class GameStateManager {
   }
 
   public setState(state: GameState): void {
-    globalEmitter.emit(GameStateEvent.STATE_CHANGE, state);
     this.currentState = state;
+    globalEmitter.emit(GameStateEvent.STATE_CHANGE, this.currentState);
   }
 
   public isBetting(): boolean {

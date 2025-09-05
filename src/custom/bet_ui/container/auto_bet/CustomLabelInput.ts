@@ -3,6 +3,9 @@ import { CustomInputBase } from "../../base/CustomInputBase";
 import { LabeledInput } from "../../base/LabeledInput";
 import { Button } from "../../../../app/ui/Button";
 import { TriangleType } from "../../base/TriangleSprite";
+import { globalEmitter } from "../../../events/GlobalEmitter";
+import { GameStateEvent } from "../../../events/GameStateEvent";
+import { GameState } from "../../../_game/manage_game_states/GameState";
 
 const defaultInputFieldSize = {
     width: 500,
@@ -29,6 +32,8 @@ export class CustomLabelInput extends LabeledInput {
             .stroke({ width: 4, color: 'gray', alpha: 1, alignment: 0.5 });
 
         super(x, y, defaultInputFieldSize.width, defaultInputFieldSize.height, leftLabel, rightLabel, new CustomInputBase(inputFieldGraphics, ''));
+
+        globalEmitter.on(GameStateEvent.STATE_CHANGE, this.onGameStatesChange.bind(this));
 
         // Reset button
         this.resetButton = new Button({
@@ -103,5 +108,15 @@ export class CustomLabelInput extends LabeledInput {
     private onTypeRequestValueChange(value: string) {
         let currValue = Number(value);
         this.inputAmount.value = String(Math.max(MIN_VALUE, Math.min(currValue, MAX_VALUE)));
+    }
+
+    private onGameStatesChange(state: GameState) {
+        if (state === GameState.BETTING) {
+            this.interactive = false;
+            this.interactiveChildren = false;
+        } else {
+            this.interactive = true;
+            this.interactiveChildren = true;
+        }
     }
 }
