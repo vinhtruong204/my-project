@@ -9,7 +9,7 @@ import { CreationEngine } from "./engine/engine";
  */
 import "@pixi/sound";
 import { UIManager } from "./custom/manager_ui/UIManager";
-import { BoardContainer } from "./custom/board/BoardContainer";
+import { BoardContainer } from "./custom/_game/board/BoardContainer";
 // import "@esotericsoftware/spine-pixi-v8";
 
 // Create a new creation engine instance
@@ -50,4 +50,12 @@ setEngine(engine);
   // Adjust position to align center items
   uiManager.position.set((engine.screen.width - uiManager.width - boardContainer.width) / 2, 50);
   boardContainer.position.set(uiManager.x + uiManager.width + 50, uiManager.y);
+
+  // Adjust position to align center items
+  window.onresize = onWindowResize;
+
+  function onWindowResize() {
+    uiManager.position.set((engine.screen.width - uiManager.width - boardContainer.width) / 2, 50);
+    boardContainer.position.set(uiManager.x + uiManager.width + 50, uiManager.y);
+  }
 })();

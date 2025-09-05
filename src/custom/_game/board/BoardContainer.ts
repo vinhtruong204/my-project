@@ -1,7 +1,9 @@
-import { Container } from "pixi.js";
-import { GlobalConfig } from "../../app/config/GlobalConfig";
-import { Button } from "../../app/ui/Button";
-import { engine } from "../../app/getEngine";
+import { Container, Sprite, Texture } from "pixi.js";
+import { GlobalConfig } from "../../../app/config/GlobalConfig";
+import { Button } from "../../../app/ui/Button";
+import { engine } from "../../../app/getEngine";
+import { ItemType } from "./ItemType";
+import { GetItem } from "../GetItem";
 
 export class BoardContainer extends Container {
     constructor(x: number, y: number) {
@@ -21,7 +23,7 @@ export class BoardContainer extends Container {
         const buttonHeight = (engine().screen.height * 0.95) / rows;
         const buttonSize = Math.min(buttonWidth, buttonHeight);
 
-        console.log(window.innerWidth, window.innerHeight);
+        // console.log(window.innerWidth, window.innerHeight);
 
         for (let i = 0; i < rows; i++) {
             const columnContainer = new Container({ x: i * buttonSize, y: 0 });
@@ -30,6 +32,7 @@ export class BoardContainer extends Container {
 
                 // Set position of the button
                 button.y = j * buttonSize;
+                button.onPress.connect(() => this.onPress(button, i, j));
 
                 columnContainer.addChild(button);
             }
@@ -38,4 +41,17 @@ export class BoardContainer extends Container {
         }
     }
 
+    private async onPress(btn: Button, i: number, j: number) {
+        const sprite = new Sprite();
+        sprite.setSize(btn.width, btn.height);
+
+        // console.log(i, j);
+        if (await GetItem.getItemType(i, j) === ItemType.DIAMOND) {
+            sprite.texture = Texture.from('diamond.png');
+            btn.defaultView = sprite;
+        }
+        else {
+
+        }
+    }
 }
