@@ -1,9 +1,10 @@
-import { Container, Sprite, Texture } from "pixi.js";
+import { Container, Sprite } from "pixi.js";
 import { GlobalConfig } from "../../../app/config/GlobalConfig";
 import { Button } from "../../../app/ui/Button";
 import { engine } from "../../../app/getEngine";
 import { ItemType } from "./ItemType";
-import { GetItem } from "../GetItem";
+import { GetItem } from "../get_data/GetItem";
+import { GameStateManager } from "../manage_game_states/GameStateManager";
 
 export class BoardContainer extends Container {
     constructor(x: number, y: number) {
@@ -42,16 +43,18 @@ export class BoardContainer extends Container {
     }
 
     private async onPress(btn: Button, i: number, j: number) {
-        const sprite = new Sprite();
+        if (!GameStateManager.getInstance().isBetting()) return;
+        if (btn.pressed) return;
+
+        let sprite = new Sprite();
+
+        if (await GetItem.getItemType(i, j) === ItemType.DIAMOND)
+            sprite = Sprite.from('diamond.png');
+        else
+            sprite = Sprite.from('bomb.png');
+
         sprite.setSize(btn.width, btn.height);
-
-        // console.log(i, j);
-        if (await GetItem.getItemType(i, j) === ItemType.DIAMOND) {
-            sprite.texture = Texture.from('diamond.png');
-            btn.defaultView = sprite;
-        }
-        else {
-
-        }
+        btn.defaultView = sprite;
+        btn.pressed = true;
     }
 }

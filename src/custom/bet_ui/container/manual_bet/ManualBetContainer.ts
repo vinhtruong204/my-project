@@ -1,5 +1,7 @@
 import { GlobalConfig } from "../../../../app/config/GlobalConfig";
 import { Button } from "../../../../app/ui/Button";
+import { GameState } from "../../../_game/manage_game_states/GameState";
+import { GameStateManager } from "../../../_game/manage_game_states/GameStateManager";
 import { BetContainer } from "../BetContainer";
 import { ManualBettingContainer } from "./ManualBettingContainer";
 
@@ -34,10 +36,12 @@ export class ManualBetContainer extends BetContainer {
     }
 
     private onBetButtonClicked() {
+        GameStateManager.getInstance().setState(GameState.BETTING);
         this.updateUI(false);
     }
 
     private onBettingCompleted() {
+        GameStateManager.getInstance().setState(GameState.NOT_BETTING);
         this.updateUI(true);
     }
 

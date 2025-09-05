@@ -1,4 +1,4 @@
-import { ItemType } from "../../custom/_game/board/ItemType";
+import { ItemType } from "../board/ItemType";
 
 export class GetItem {
   private static mockData: number[][] = [
@@ -9,19 +9,19 @@ export class GetItem {
     [0, 1, 1, 1, 1],
   ];
 
-  public static generateMatrix(bombs: number) {
+  public static generateMatrix(mines: number) {
     const rows = 5;
     const cols = 5;
     const totalCells = rows * cols;
 
-    if (bombs >= totalCells) {
-      throw new Error("Too many bombs! More than available cells.");
+    if (mines >= totalCells) {
+      throw new Error("Too many mines! More than available cells.");
     }
 
     const flat: number[] = Array(totalCells).fill(1);
 
     let placed = 0;
-    while (placed < bombs) {
+    while (placed < mines) {
       const randIndex = Math.floor(Math.random() * totalCells);
       if (flat[randIndex] === 1) {
         flat[randIndex] = 0;
@@ -42,18 +42,6 @@ export class GetItem {
       setTimeout(() => {
         resolve(this.mockData[j][i]);
       }, 200);
-    });
-  }
-
-  public static async fetchData(): Promise<any> {
-    return new Promise((resolve) => {
-      setTimeout(() => {
-        resolve({
-          sender: "Server",
-          matrix: this.mockData,
-          error: 0,
-        });
-      }, 300);
     });
   }
 }

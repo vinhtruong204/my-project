@@ -1,3 +1,5 @@
+import { GameStateEvent } from "../../events/GameStateEvent";
+import { globalEmitter } from "../../events/GlobalEmitter";
 import { GameState } from "./GameState";
 
 export class GameStateManager {
@@ -5,7 +7,7 @@ export class GameStateManager {
 
   private currentState: GameState = GameState.NOT_BETTING;
 
-  private constructor() {}
+  private constructor() { }
 
   public static getInstance(): GameStateManager {
     if (!GameStateManager.instance) {
@@ -19,6 +21,7 @@ export class GameStateManager {
   }
 
   public setState(state: GameState): void {
+    globalEmitter.emit(GameStateEvent.STATE_CHANGE, state);
     this.currentState = state;
   }
 
