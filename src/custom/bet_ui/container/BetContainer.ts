@@ -21,7 +21,6 @@ export class BetContainer extends Container {
         this.selectMines = new SelectMines(this.betAmount.x, this.betAmount.y + this.betAmount.height);
 
         this.addChild(this.betAmount, this.selectMines);
-        // this.addChild(this.betAmount);
     }
 
     public getBetState(): BetState {

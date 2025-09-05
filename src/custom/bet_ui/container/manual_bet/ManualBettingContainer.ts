@@ -19,8 +19,8 @@ export class ManualBettingContainer extends Container {
 
     private totalProfit: LabeledInput;
 
-    private randomButton: Button;
-    private widthdrawButton: Button;
+    private randomPickButton: Button;
+    private cashoutButton: Button;
 
     public onBettingCompleted?: () => void;
 
@@ -41,7 +41,7 @@ export class ManualBettingContainer extends Container {
             0,
             defaultInputFieldSize.width,
             defaultInputFieldSize.height,
-            'Diamond',
+            'Diamonds',
             '',
             this.getInputCanNotInteract());
 
@@ -56,27 +56,27 @@ export class ManualBettingContainer extends Container {
             this.getInputCanNotInteract(true));
 
         // Random button
-        this.randomButton = new Button({
-            text: 'Choose randomly',
+        this.randomPickButton = new Button({
+            text: 'Random Pick',
             width: this.totalProfit.width,
             height: this.totalProfit.height,
             fontSize: 40
         });
-        this.randomButton.anchor.set(0, 0);
-        this.randomButton.position.set(this.totalProfit.x, this.totalProfit.y + this.totalProfit.height + 20);
+        this.randomPickButton.anchor.set(0, 0);
+        this.randomPickButton.position.set(this.totalProfit.x, this.totalProfit.y + this.totalProfit.height + 20);
 
         // Withdraw button
-        this.widthdrawButton = new Button({
-            text: 'Withdraw',
+        this.cashoutButton = new Button({
+            text: 'Cashout',
             width: this.totalProfit.width,
             height: this.totalProfit.height,
             fontSize: 40
         });
-        this.widthdrawButton.anchor.set(0, 0);
-        this.widthdrawButton.position.set(this.randomButton.x, this.randomButton.y + this.randomButton.height + 20);
-        this.widthdrawButton.onPress.connect(this.handleWithdrawButtonClicked.bind(this));
+        this.cashoutButton.anchor.set(0, 0);
+        this.cashoutButton.position.set(this.randomPickButton.x, this.randomPickButton.y + this.randomPickButton.height + 20);
+        this.cashoutButton.onPress.connect(this.handleWithdrawButtonClicked.bind(this));
 
-        this.addChild(this.minesCount, this.diamondRemain, this.totalProfit, this.randomButton, this.widthdrawButton);
+        this.addChild(this.minesCount, this.diamondRemain, this.totalProfit, this.randomPickButton, this.cashoutButton);
 
         // Disable when the game start
         this.visible = false;

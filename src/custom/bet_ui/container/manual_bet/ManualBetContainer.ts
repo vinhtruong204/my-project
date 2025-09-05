@@ -2,6 +2,8 @@ import { GlobalConfig } from "../../../../app/config/GlobalConfig";
 import { Button } from "../../../../app/ui/Button";
 import { GameState } from "../../../_game/manage_game_states/GameState";
 import { GameStateManager } from "../../../_game/manage_game_states/GameStateManager";
+import { GameStateEvent } from "../../../events/GameStateEvent";
+import { globalEmitter } from "../../../events/GlobalEmitter";
 import { BetContainer } from "../BetContainer";
 import { ManualBettingContainer } from "./ManualBettingContainer";
 
@@ -13,6 +15,9 @@ export class ManualBetContainer extends BetContainer {
 
     constructor(x: number, y: number) {
         super(x, y);
+
+        // Register callback when user click a mine 
+        globalEmitter.on(GameStateEvent.STATE_CHANGE, this.onGameStateChange.bind(this));
 
         this.manualBettingContainer = new ManualBettingContainer(this.selectMines.x, this.selectMines.y);
 
@@ -37,12 +42,18 @@ export class ManualBetContainer extends BetContainer {
 
     private onBetButtonClicked() {
         GameStateManager.getInstance().setState(GameState.BETTING);
-        this.updateUI(false);
+
+        // Emit event to generate the board
+        globalEmitter.emit(GameStateEvent.STATE_CHANGE, GameState.BETTING, this.selectMines.value + 1);
     }
 
     private onBettingCompleted() {
         GameStateManager.getInstance().setState(GameState.NOT_BETTING);
-        this.updateUI(true);
+    }
+
+    private onGameStateChange(state: GameState) {
+        if (state === GameState.NOT_BETTING) this.updateUI(true);
+        else this.updateUI(false);
     }
 
     private updateUI(isBetCompleted: boolean) {

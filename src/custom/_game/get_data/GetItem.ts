@@ -1,3 +1,4 @@
+import { GlobalConfig } from "../../../app/config/GlobalConfig";
 import { ItemType } from "../board/ItemType";
 
 export class GetItem {
@@ -10,8 +11,8 @@ export class GetItem {
   ];
 
   public static generateMatrix(mines: number) {
-    const rows = 5;
-    const cols = 5;
+    const rows = GlobalConfig.TOTAL_ROWS;
+    const cols = GlobalConfig.TOTAL_COLUMNS;
     const totalCells = rows * cols;
 
     if (mines >= totalCells) {
@@ -41,7 +42,7 @@ export class GetItem {
     return new Promise((resolve) => {
       setTimeout(() => {
         resolve(this.mockData[j][i]);
-      }, 200);
+      }, 100);
     });
   }
 }
