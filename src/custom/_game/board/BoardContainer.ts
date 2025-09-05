@@ -11,7 +11,7 @@ import { GameState } from "../manage_game_states/GameState";
 
 export class BoardContainer extends Container {
     private buttonSize: number = 0;
-    private buttons: Button[] = [];
+    private buttons: Button[][] = [];
 
     constructor(x: number, y: number) {
         super({ x: x, y: y });
@@ -30,6 +30,7 @@ export class BoardContainer extends Container {
         this.buttonSize = Math.min(buttonWidth, buttonHeight);
 
         for (let i = 0; i < rows; i++) {
+            this.buttons[i] = [];
             const columnContainer = new Container({ x: i * this.buttonSize, y: 0 });
             for (let j = 0; j < columns; j++) {
                 const button = new Button({ width: this.buttonSize, height: this.buttonSize });
@@ -37,7 +38,7 @@ export class BoardContainer extends Container {
                 button.onPress.connect(() => this.onPress(button, i, j));
 
                 columnContainer.addChild(button);
-                this.buttons.push(button);
+                this.buttons[i][j] = button;
             }
             this.addChild(columnContainer);
         }
@@ -54,7 +55,8 @@ export class BoardContainer extends Container {
 
             GameStateManager.getInstance().setState(GameState.NOT_BETTING);
 
-            // Update UI
+            // Reveal all the buttons
+            this.reavealAllButtons();
         }
 
         btn.pressed = true;
@@ -70,14 +72,33 @@ export class BoardContainer extends Container {
                 this.resetAllButtons();
             }
         }
+        else {
+            this.reavealAllButtons();
+        }
     }
 
     private resetAllButtons() {
-        for (const btn of this.buttons) {
-            let sprite = this.getButtonView("button.png");
+        for (let i = 0; i < this.buttons.length; i++) {
+            for (let j = 0; j < this.buttons[i].length; j++) {
+                let sprite = this.getButtonView("button.png");
 
-            btn.pressed = false;
-            btn.defaultView = sprite;
+                this.buttons[i][j].pressed = false;
+                this.buttons[i][j].alpha = 1;
+                this.buttons[i][j].defaultView = sprite;
+            }
+        }
+    }
+
+    private async reavealAllButtons() {
+        for (let i = 0; i < this.buttons.length; i++) {
+            for (let j = 0; j < this.buttons[i].length; j++) {
+                if (await GetItem.getItemType(i, j) === ItemType.DIAMOND)
+                    this.buttons[i][j].defaultView = this.getButtonView("diamond.png");
+                else
+                    this.buttons[i][j].defaultView = this.getButtonView("bomb.png");
+
+                this.buttons[i][j].alpha = this.buttons[i][j].pressed ? 1 : 0.5;
+            }
         }
     }
 

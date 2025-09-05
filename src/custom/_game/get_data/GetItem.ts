@@ -42,7 +42,7 @@ export class GetItem {
     return new Promise((resolve) => {
       setTimeout(() => {
         resolve(this.mockData[j][i]);
-      }, 100);
+      }, 0);
     });
   }
 }
