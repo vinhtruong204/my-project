@@ -12,13 +12,18 @@ import { ManualBettingEvent } from "../../events/manual_betting_events/ManualBet
 import { GameModeChangeEvent } from "../../events/game_mode_events/GameModeChangeEvent";
 import { PhaseAuto } from "./PhaseAuto";
 import { WinContainer } from "./WinContainer";
+import { AutoBettingEvent } from "../../events/auto_betting_events/AutoBettingEvent";
+import { WinContainerEvent } from "../../events/WinContainerEvent";
 
 export class BoardContainer extends Container {
     private buttonSize: number = 0;
     private buttons: Button[][] = [];
 
+    // Variables for the auto
     private isAuto: boolean = false;
     private ticker: Ticker;
+    private diamondCount: number = 0;
+    private mineCount: number = 0;
 
     // Win container
     private winContainer: WinContainer;
@@ -148,7 +153,7 @@ export class BoardContainer extends Container {
 
     private autoBetCallback: (() => void) | null = null;
     private handleStartAutoBet(mines: number, numberOfGames: number) {
-        console.log(numberOfGames);
+        // console.log(numberOfGames);
 
         // if exist previous callback
         if (this.autoBetCallback) {
@@ -167,6 +172,7 @@ export class BoardContainer extends Container {
                     phase = PhaseAuto.RESET;
                 }
                 else if (phase === PhaseAuto.RESET) {
+                    this.disableWinContainer();
                     this.resetAllButtons();
                     phase = PhaseAuto.REVEAL;
 
@@ -186,6 +192,20 @@ export class BoardContainer extends Container {
         this.ticker.start();
     }
 
+    private checkGameResult() {
+        console.log(this.diamondCount, this.mineCount);
+
+        // If loss do nothing
+        if (this.mineCount > 0) return;
+
+        // If win send diamond count to auto bet container
+        globalEmitter.emit(AutoBettingEvent.ON_WIN, this.diamondCount);
+    }
+
+    private disableWinContainer() {
+        globalEmitter.emit(WinContainerEvent.DIASABLE);
+    }
+
     private resetAllButtons(isTheFirstTime: boolean = false) {
         for (let i = 0; i < this.buttons.length; i++) {
             for (let j = 0; j < this.buttons[i].length; j++) {
@@ -194,7 +214,7 @@ export class BoardContainer extends Container {
                 // If is not auto or the first time switch to auto mode
                 if (!this.isAuto || isTheFirstTime)
                     this.buttons[i][j].pressed = false;
-                
+
                 this.buttons[i][j].alpha = this.isAuto && this.buttons[i][j].pressed ? 0.75 : 1;
                 this.buttons[i][j].defaultView = sprite;
             }
@@ -202,17 +222,31 @@ export class BoardContainer extends Container {
     }
 
     private async reavealAllButtons() {
+        this.diamondCount = 0;
+        this.mineCount = 0;
+
         for (let i = 0; i < this.buttons.length; i++) {
             for (let j = 0; j < this.buttons[i].length; j++) {
-                if (await GetItem.getItemType(i, j) === ItemType.DIAMOND)
+                const item = await GetItem.getItemType(i, j);
+                if (item === ItemType.DIAMOND) {
                     this.buttons[i][j].defaultView = this.getButtonView("diamond.png");
-                else
+                    if (this.buttons[i][j].pressed) {
+                        this.diamondCount++;
+                    }
+                } else {
                     this.buttons[i][j].defaultView = this.getButtonView("bomb.png");
-
+                    if (this.buttons[i][j].pressed) {
+                        this.mineCount++;
+                    }
+                }
                 this.buttons[i][j].alpha = this.buttons[i][j].pressed ? 1 : 0.15;
             }
         }
+
+        // console.log(this.diamondCount, this.mineCount);
+        this.checkGameResult();
     }
+
 
     private getButtonView(path: string): Sprite {
         let sprite = Sprite.from(path);

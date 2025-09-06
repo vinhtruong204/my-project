@@ -9,6 +9,8 @@ import { GameStateManager } from "../../../_game/manage_game_states/GameStateMan
 import { GameState } from "../../../_game/manage_game_states/GameState";
 import { globalEmitter } from "../../../events/GlobalEmitter";
 import { GameStateEvent } from "../../../events/game_states/GameStateEvent";
+import { AutoBettingEvent } from "../../../events/auto_betting_events/AutoBettingEvent";
+import { WinContainerEvent } from "../../../events/WinContainerEvent";
 
 const MAX_NUMBER_OF_GAMES = 999999999;
 
@@ -28,11 +30,15 @@ export class AutoBetContainer extends BetContainer {
     private labelLoss: LabeledInput;
 
     private startAutobet: Button;
+    private profitMultiplierPerTime: number = 0;
 
     constructor(x: number, y: number) {
         super(x, y);
 
         globalEmitter.on(GameStateEvent.STATE_CHANGE, this.onGameStateChange.bind(this));
+
+        // Register win listener when auto betting
+        globalEmitter.on(AutoBettingEvent.ON_WIN, this.onAutoBetWin.bind(this));
 
         // Input number of games Autobet
         this.inputNumberOfGames = new InputNumberOfGames();
@@ -86,9 +92,12 @@ export class AutoBetContainer extends BetContainer {
                 GameState.BETTING,
                 this.selectMines.value + 1,
                 Number(this.numberOfGames.getInputAmount().value));
+
+            this.profitMultiplierPerTime = (this.selectMines.value + 1) / 10;
         }
         else {
             GameStateManager.getInstance().setState(GameState.NOT_BETTING);
+            globalEmitter.emit(WinContainerEvent.DIASABLE);
         }
     }
 
@@ -100,5 +109,13 @@ export class AutoBetContainer extends BetContainer {
 
             this.startAutobet.text = 'Start Autobet';
         }
+    }
+
+    private onAutoBetWin(diamondCount: number) {
+        let profitMultiplier = 1 + diamondCount * this.profitMultiplierPerTime;
+        let totalProfit = Number(this.betAmount.getInputAmount().value) * profitMultiplier;
+
+        // Enable win container 
+        globalEmitter.emit(WinContainerEvent.ENABLE, profitMultiplier, totalProfit);
     }
 }
