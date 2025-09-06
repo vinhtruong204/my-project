@@ -29,6 +29,9 @@ export class AutoBetContainer extends BetContainer {
     private labelNetGain: LabeledInput;
     private labelLoss: LabeledInput;
 
+    private totalNetGain: number = 0;
+    private totalLoss: number = 0;
+
     private startAutobet: Button;
     private profitMultiplierPerTime: number = 0;
 
@@ -79,8 +82,7 @@ export class AutoBetContainer extends BetContainer {
             fontSize: 40,
         });
 
-        this.startAutobet.alpha = 0.5;
-        this.startAutobet.interactive = false;
+        this.resetStartAutoButton()
         this.startAutobet.anchor.set(0.5, 0.5);
         this.startAutobet.position.set(this.labelLoss.width / 2, this.labelLoss.y + this.labelLoss.height + 50);
         this.startAutobet.onPress.connect(this.onStartAutobet.bind(this));
@@ -90,12 +92,15 @@ export class AutoBetContainer extends BetContainer {
 
     private onItemPressed(buttonPressedCount: number) {
         if (buttonPressedCount <= 0) {
-            this.startAutobet.interactive = false;
-            this.startAutobet.alpha = 0.5;
+            this.resetStartAutoButton();
         } else {
-            this.startAutobet.alpha = 1;
-            this.startAutobet.interactive = true;
+            this.allowStartAutoButton();
         }
+    }
+
+    private allowStartAutoButton() {
+        this.startAutobet.alpha = 1;
+        this.startAutobet.interactive = true;
     }
 
     private onValueChange(value: string) {
@@ -110,7 +115,12 @@ export class AutoBetContainer extends BetContainer {
                 this.selectMines.value + 1,
                 Number(this.numberOfGames.getInputAmount().value));
 
+            // Calculate profit pertime
             this.profitMultiplierPerTime = (this.selectMines.value + 1) / 10;
+
+            // Reset net gain and loss value
+            this.totalNetGain = 0;
+            this.totalLoss = 0;
         }
         else {
             GameStateManager.getInstance().setState(GameState.NOT_BETTING);
@@ -123,12 +133,18 @@ export class AutoBetContainer extends BetContainer {
             this.startAutobet.text = 'Stop Autobet';
         }
         else if (state === GameState.NOT_BETTING) {
-
             this.startAutobet.text = 'Start Autobet';
         }
     }
+    private resetStartAutoButton() {
+        this.startAutobet.interactive = false;
+        this.startAutobet.alpha = 0.5;
+    }
 
     private onAutoBetWin(diamondCount: number) {
+        // Calculate net gain
+        this.totalNetGain += Number(this.betAmount.getInputAmount().value) * (diamondCount * this.profitMultiplierPerTime);
+
         let profitMultiplier = 1 + diamondCount * this.profitMultiplierPerTime;
         let totalProfit = Number(this.betAmount.getInputAmount().value) * profitMultiplier;
 
@@ -142,9 +158,14 @@ export class AutoBetContainer extends BetContainer {
 
             this.betAmount.getInputAmount().value = String(newBetValue.toFixed(2));
         }
+
+        this.checkStopAutobetting();
     }
 
     private onAutoBetLoss() {
+        // Calculate loss 
+        this.totalLoss += Number(this.betAmount.getInputAmount().value);
+
         if (this.onLossLabelInput.getCurrentPercent() !== 0) {
             let currBetValue = Number(this.betAmount.getInputAmount().value);
             let percentIncrease = this.onLossLabelInput.getCurrentPercent();
@@ -152,5 +173,27 @@ export class AutoBetContainer extends BetContainer {
 
             this.betAmount.getInputAmount().value = String(newBetValue.toFixed(2));
         }
+
+        this.checkStopAutobetting();
     }
+
+    private checkStopAutobetting() {
+        let stop = false;
+
+        const stopOnNetGain = Number(this.labelNetGain.getInputAmount().value) || 0;
+        const stopOnLoss = Number(this.labelLoss.getInputAmount().value) || 0;
+
+        if (stopOnNetGain > 0 && this.totalNetGain >= stopOnNetGain)
+            stop = true;
+
+        if (stopOnLoss > 0 && this.totalLoss >= stopOnLoss)
+            stop = true;
+
+        // Stop immediately
+        if (stop) {
+            GameStateManager.getInstance().setState(GameState.NOT_BETTING);
+            globalEmitter.emit(WinContainerEvent.DIASABLE);
+        }
+    }
+
 }
