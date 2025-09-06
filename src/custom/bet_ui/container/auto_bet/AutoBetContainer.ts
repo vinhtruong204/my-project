@@ -7,6 +7,8 @@ import { CustomInputStopAuto } from "./CustomInputStopAuto";
 import { InputBetAmount } from "../../bet_amount/InputBetAmount";
 import { GameStateManager } from "../../../_game/manage_game_states/GameStateManager";
 import { GameState } from "../../../_game/manage_game_states/GameState";
+import { globalEmitter } from "../../../events/GlobalEmitter";
+import { GameStateEvent } from "../../../events/game_states/GameStateEvent";
 
 const MAX_NUMBER_OF_GAMES = 999999999;
 
@@ -25,12 +27,14 @@ export class AutoBetContainer extends BetContainer {
     private labelNetGain: LabeledInput;
     private labelLoss: LabeledInput;
 
-    private startAutoplay: Button;
+    private startAutobet: Button;
 
     constructor(x: number, y: number) {
         super(x, y);
 
-        // Input number of games autoplay
+        globalEmitter.on(GameStateEvent.STATE_CHANGE, this.onGameStateChange.bind(this));
+
+        // Input number of games Autobet
         this.inputNumberOfGames = new InputNumberOfGames();
         this.inputNumberOfGames.onTypeRequestValueChange = this.onValueChange.bind(this);
 
@@ -58,32 +62,43 @@ export class AutoBetContainer extends BetContainer {
         this.visible = false;
 
         // 
-        this.startAutoplay = new Button({
-            text: "Start Autoplay",
+        this.startAutobet = new Button({
+            text: "Start Autobet",
             width: defaultButtonSize.width,
             height: defaultButtonSize.height,
             fontSize: 40
         });
-        this.startAutoplay.anchor.set(0.5, 0.5);
-        this.startAutoplay.position.set(this.labelLoss.width / 2, this.labelLoss.y + this.labelLoss.height + 50);
-        this.startAutoplay.onPress.connect(this.onStartAutoplay.bind(this));
+        this.startAutobet.anchor.set(0.5, 0.5);
+        this.startAutobet.position.set(this.labelLoss.width / 2, this.labelLoss.y + this.labelLoss.height + 50);
+        this.startAutobet.onPress.connect(this.onStartAutobet.bind(this));
 
-        this.addChild(this.numberOfGames, this.onWinLabelInput, this.onLoseLabelInput, this.labelNetGain, this.labelLoss, this.startAutoplay);
+        this.addChild(this.numberOfGames, this.onWinLabelInput, this.onLoseLabelInput, this.labelNetGain, this.labelLoss, this.startAutobet);
     }
 
     private onValueChange(value: string) {
         this.inputNumberOfGames.value = Number(value) > MAX_NUMBER_OF_GAMES ? String(MAX_NUMBER_OF_GAMES) : value;
     }
 
-    private onStartAutoplay() {
-        if (this.startAutoplay.text === 'Start Autoplay') {
+    private onStartAutobet() {
+        if (this.startAutobet.text === 'Start Autobet') {
             GameStateManager.getInstance().setState(GameState.BETTING);
-            this.startAutoplay.text = 'Stop Autoplay';
+            globalEmitter.emit(GameStateEvent.STATE_CHANGE,
+                GameState.BETTING,
+                this.selectMines.value + 1,
+                Number(this.numberOfGames.getInputAmount().value));
         }
         else {
             GameStateManager.getInstance().setState(GameState.NOT_BETTING);
-            this.startAutoplay.text = 'Start Autoplay';
         }
     }
 
+    private onGameStateChange(state: GameState) {
+        if (state === GameState.BETTING) {
+            this.startAutobet.text = 'Stop Autobet';
+        }
+        else if (state === GameState.NOT_BETTING) {
+
+            this.startAutobet.text = 'Start Autobet';
+        }
+    }
 }

@@ -1,4 +1,4 @@
-import { Container, Sprite } from "pixi.js";
+import { Container, Sprite, Ticker } from "pixi.js";
 import { GlobalConfig } from "../../../app/config/GlobalConfig";
 import { Button } from "../../../app/ui/Button";
 import { engine } from "../../../app/getEngine";
@@ -9,18 +9,30 @@ import { globalEmitter } from "../../events/GlobalEmitter";
 import { GameStateEvent } from "../../events/game_states/GameStateEvent";
 import { GameState } from "../manage_game_states/GameState";
 import { ManualBettingEvent } from "../../events/manual_betting_events/ManualBettingEvent";
+import { GameModeChangeEvent } from "../../events/game_mode_events/GameModeChangeEvent";
+import { PhaseAuto } from "./PhaseAuto";
 
 export class BoardContainer extends Container {
     private buttonSize: number = 0;
     private buttons: Button[][] = [];
 
+    private isAuto: boolean = false;
+    private ticker: Ticker;
+
     constructor(x: number, y: number) {
         super({ x: x, y: y });
 
+        // Listeners for the manual bet events
         globalEmitter.on(GameStateEvent.STATE_CHANGE, this.onGameStateChange.bind(this));
         globalEmitter.on(ManualBettingEvent.PICK_RANDOM, this.onPickRandom.bind(this));
 
+        // Listeners for the game mode change events
+        globalEmitter.on(GameModeChangeEvent.AUTO, this.onAutoModeStart.bind(this));
+        globalEmitter.on(GameModeChangeEvent.MANUAL, this.onAutoModeStop.bind(this));
+
         this.initBoard();
+
+        this.ticker = new Ticker();
     }
 
     private initBoard() {
@@ -51,6 +63,13 @@ export class BoardContainer extends Container {
     }
 
     private async onPress(btn: Button, i: number, j: number) {
+        // Seperate logic for the auto mode 
+        if (this.isAuto) {
+            this.onPressAutoMode(btn);
+            return;
+        }
+
+        // Stop if the game isn't start and button pressed before
         if (!GameStateManager.getInstance().isBetting()) return;
         if (btn.pressed) return;
 
@@ -74,8 +93,25 @@ export class BoardContainer extends Container {
         btn.pressed = true;
     }
 
-    private onGameStateChange(state: GameState, mines: number) {
+    private onPressAutoMode(btn: Button) {
+        if (GameStateManager.getInstance().getState() === GameState.BETTING) return;
+
+        if (!btn.pressed) {
+            btn.pressed = true;
+            btn.alpha = 0.75;
+        } else {
+            btn.pressed = false;
+            btn.alpha = 1;
+        }
+    }
+
+    private onGameStateChange(state: GameState, mines: number, numberOfGames: number = -1) {
         if (state === GameState.BETTING) {
+            if (this.isAuto && numberOfGames !== -1) {
+                this.handleStartAutoBet(mines, numberOfGames);
+                return;
+            }
+
             if (mines) {
                 // Generate the matrix
                 GetItem.generateMatrix(mines);
@@ -85,18 +121,66 @@ export class BoardContainer extends Container {
             }
         }
         else {
+            if (this.isAuto) {
+                this.resetAllButtons();
+                this.ticker.stop();
+                return;
+            }
+
             this.reavealAllButtons();
         }
+    }
+
+    private autoBetCallback: (() => void) | null = null;
+    private handleStartAutoBet(mines: number, numberOfGames: number) {
+        console.log(numberOfGames);
+
+        // if exist previous callback
+        if (this.autoBetCallback) {
+            this.ticker.remove(this.autoBetCallback);
+        }
+
+        let elapsed = 0;
+        let phase: PhaseAuto = PhaseAuto.REVEAL;
+        this.autoBetCallback = () => {
+            elapsed += this.ticker.deltaMS;
+
+            if (elapsed >= 1000) {
+                if (phase === PhaseAuto.REVEAL) {
+                    GetItem.generateMatrix(mines);
+                    this.reavealAllButtons();
+                    phase = PhaseAuto.RESET;
+                }
+                else if (phase === PhaseAuto.RESET) {
+                    this.resetAllButtons();
+                    phase = PhaseAuto.REVEAL;
+
+                    if (numberOfGames !== 0) {
+                        numberOfGames--;
+
+                        if (numberOfGames <= 0) {
+                            GameStateManager.getInstance().setState(GameState.NOT_BETTING);
+                        }
+                    }
+                }
+
+                elapsed = 0;
+            }
+        };
+
+
+        this.ticker.add(this.autoBetCallback);
+        this.ticker.start();
     }
 
     private resetAllButtons() {
         for (let i = 0; i < this.buttons.length; i++) {
             for (let j = 0; j < this.buttons[i].length; j++) {
                 let sprite = this.getButtonView("button.png");
-                sprite.setSize(this.buttons[i][j].width, this.buttons[i][j].height);
 
-                this.buttons[i][j].pressed = false;
-                this.buttons[i][j].alpha = 1;
+                if (!this.isAuto)
+                    this.buttons[i][j].pressed = false;
+                this.buttons[i][j].alpha = this.isAuto && this.buttons[i][j].pressed ? 0.75 : 1;
                 this.buttons[i][j].defaultView = sprite;
             }
         }
@@ -110,7 +194,7 @@ export class BoardContainer extends Container {
                 else
                     this.buttons[i][j].defaultView = this.getButtonView("bomb.png");
 
-                this.buttons[i][j].alpha = this.buttons[i][j].pressed ? 1 : 0.5;
+                this.buttons[i][j].alpha = this.buttons[i][j].pressed ? 1 : 0.15;
             }
         }
     }
@@ -144,4 +228,17 @@ export class BoardContainer extends Container {
         this.onPress(btn, i, j);
     }
 
+    private onAutoModeStart() {
+        this.isAuto = true;
+
+        // Reset the board
+        this.resetAllButtons();
+
+    }
+
+    private onAutoModeStop() {
+        this.isAuto = false;
+
+        this.resetAllButtons();
+    }
 }

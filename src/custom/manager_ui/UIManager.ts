@@ -3,6 +3,8 @@ import { ContainerCapsule } from "../capsule_ui/ContainerCapsule";
 import { ManualBetContainer } from "../bet_ui/container/manual_bet/ManualBetContainer";
 import { AutoBetContainer } from "../bet_ui/container/auto_bet/AutoBetContainer";
 import { CapsuleType } from "../capsule_ui/CapsuleType";
+import { globalEmitter } from "../events/GlobalEmitter";
+import { GameModeChangeEvent } from "../events/game_mode_events/GameModeChangeEvent";
 
 //**This class will manage visible of two types UI (Manual and Auto) */
 export class UIManager extends Container {
@@ -39,13 +41,19 @@ export class UIManager extends Container {
 
             // Update state
             this.autoBetContainer.setBetState(this.manualBetContainer.getBetState());
+
+            // Raise start auto event to the board
+            globalEmitter.emit(GameModeChangeEvent.AUTO);
         }
-        else {
+        else if (capsuleType === CapsuleType.MANUAL) {
             this.autoBetContainer.visible = false;
             this.manualBetContainer.visible = true;
 
             // Update state
             this.manualBetContainer.setBetState(this.autoBetContainer.getBetState());
+
+            // Raise start auto event to the board
+            globalEmitter.emit(GameModeChangeEvent.MANUAL);
         }
     }
 }
