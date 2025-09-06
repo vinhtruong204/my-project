@@ -99,13 +99,13 @@ export class ManualBettingContainer extends Container {
         return customInputBase;
     }
 
-    public setGameConfig(minesCount: number | null, diamondRemain: number, totalProfit: number, coefficient: number = 0) {
+    public setGameConfig(minesCount: number | null, diamondRemain: number, totalProfit: number, profitMultiplier: number = 0) {
         this.minesCount.setInputAmountText(String(minesCount ? minesCount : this.minesCount.getInputAmount().value));
         this.diamondRemain.setInputAmountText(String(diamondRemain));
         this.totalProfit.setInputAmountText(String(totalProfit.toFixed(2)));
 
         // Update or reset total profit text
-        if (coefficient !== 0) this.totalProfit.setLeftLabelText(`Total profit (${coefficient.toFixed(2)}x)`);
+        if (profitMultiplier !== 0) this.totalProfit.setLeftLabelText(`Total profit (${profitMultiplier.toFixed(2)}x)`);
         else this.totalProfit.setLeftLabelText('Total profit (1.00x)');
     }
 

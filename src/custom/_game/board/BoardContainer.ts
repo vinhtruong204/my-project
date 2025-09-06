@@ -11,6 +11,7 @@ import { GameState } from "../manage_game_states/GameState";
 import { ManualBettingEvent } from "../../events/manual_betting_events/ManualBettingEvent";
 import { GameModeChangeEvent } from "../../events/game_mode_events/GameModeChangeEvent";
 import { PhaseAuto } from "./PhaseAuto";
+import { WinContainer } from "./WinContainer";
 
 export class BoardContainer extends Container {
     private buttonSize: number = 0;
@@ -18,6 +19,9 @@ export class BoardContainer extends Container {
 
     private isAuto: boolean = false;
     private ticker: Ticker;
+
+    // Win container
+    private winContainer: WinContainer;
 
     constructor(x: number, y: number) {
         super({ x: x, y: y });
@@ -30,7 +34,12 @@ export class BoardContainer extends Container {
         globalEmitter.on(GameModeChangeEvent.AUTO, this.onAutoModeStart.bind(this));
         globalEmitter.on(GameModeChangeEvent.MANUAL, this.onAutoModeStop.bind(this));
 
+        this.winContainer = new WinContainer();
+
         this.initBoard();
+
+
+        this.addChild(this.winContainer);
 
         this.ticker = new Ticker();
     }
@@ -43,11 +52,17 @@ export class BoardContainer extends Container {
         const buttonHeight = (engine().screen.height * 0.95) / rows;
         this.buttonSize = Math.min(buttonWidth, buttonHeight);
 
+        this.winContainer.position.set(
+            (this.buttonSize * GlobalConfig.TOTAL_ROWS - this.winContainer.width) / 2,
+            (this.buttonSize * GlobalConfig.TOTAL_ROWS - this.winContainer.height) / 2
+        );
+
         for (let i = 0; i < rows; i++) {
             this.buttons[i] = [];
             const columnContainer = new Container({ x: i * this.buttonSize, y: 0 });
             for (let j = 0; j < columns; j++) {
                 const button = new Button({ width: this.buttonSize, height: this.buttonSize });
+                button.defaultView = this.getButtonView('button.png');
 
                 // Adjust the position
                 button.y = j * this.buttonSize;
@@ -158,9 +173,7 @@ export class BoardContainer extends Container {
                     if (numberOfGames !== 0) {
                         numberOfGames--;
 
-                        if (numberOfGames <= 0) {
-                            GameStateManager.getInstance().setState(GameState.NOT_BETTING);
-                        }
+                        if (numberOfGames <= 0) GameStateManager.getInstance().setState(GameState.NOT_BETTING);
                     }
                 }
 
@@ -173,13 +186,15 @@ export class BoardContainer extends Container {
         this.ticker.start();
     }
 
-    private resetAllButtons() {
+    private resetAllButtons(isTheFirstTime: boolean = false) {
         for (let i = 0; i < this.buttons.length; i++) {
             for (let j = 0; j < this.buttons[i].length; j++) {
                 let sprite = this.getButtonView("button.png");
 
-                if (!this.isAuto)
+                // If is not auto or the first time switch to auto mode
+                if (!this.isAuto || isTheFirstTime)
                     this.buttons[i][j].pressed = false;
+                
                 this.buttons[i][j].alpha = this.isAuto && this.buttons[i][j].pressed ? 0.75 : 1;
                 this.buttons[i][j].defaultView = sprite;
             }
@@ -232,8 +247,7 @@ export class BoardContainer extends Container {
         this.isAuto = true;
 
         // Reset the board
-        this.resetAllButtons();
-
+        this.resetAllButtons(true);
     }
 
     private onAutoModeStop() {

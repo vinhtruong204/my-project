@@ -5,6 +5,7 @@ import { AutoBetContainer } from "../bet_ui/container/auto_bet/AutoBetContainer"
 import { CapsuleType } from "../capsule_ui/CapsuleType";
 import { globalEmitter } from "../events/GlobalEmitter";
 import { GameModeChangeEvent } from "../events/game_mode_events/GameModeChangeEvent";
+import { WinContainerEvent } from "../events/WinContainerEvent";
 
 //**This class will manage visible of two types UI (Manual and Auto) */
 export class UIManager extends Container {
@@ -44,6 +45,9 @@ export class UIManager extends Container {
 
             // Raise start auto event to the board
             globalEmitter.emit(GameModeChangeEvent.AUTO);
+
+            // Raise event to disable win container
+            globalEmitter.emit(WinContainerEvent.DIASABLE);
         }
         else if (capsuleType === CapsuleType.MANUAL) {
             this.autoBetContainer.visible = false;
