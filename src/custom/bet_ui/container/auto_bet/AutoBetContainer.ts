@@ -24,7 +24,7 @@ export class AutoBetContainer extends BetContainer {
     private inputNumberOfGames: InputNumberOfGames;
 
     private onWinLabelInput: CustomLabelInput;
-    private onLoseLabelInput: CustomLabelInput;
+    private onLossLabelInput: CustomLabelInput;
 
     private labelNetGain: LabeledInput;
     private labelLoss: LabeledInput;
@@ -39,6 +39,7 @@ export class AutoBetContainer extends BetContainer {
 
         // Register win listener when auto betting
         globalEmitter.on(AutoBettingEvent.ON_WIN, this.onAutoBetWin.bind(this));
+        globalEmitter.on(AutoBettingEvent.ON_LOSS, this.onAutoBetLoss.bind(this));
 
         // Only allow start auto
         globalEmitter.on(AutoBettingEvent.PRESSED_ITEM, this.onItemPressed.bind(this));
@@ -60,11 +61,11 @@ export class AutoBetContainer extends BetContainer {
 
         // Input percent on win and loss
         this.onWinLabelInput = new CustomLabelInput(this.numberOfGames.x, this.numberOfGames.y + this.numberOfGames.height, 'On Win (%)', '');
-        this.onLoseLabelInput = new CustomLabelInput(this.onWinLabelInput.x, this.onWinLabelInput.y + this.onWinLabelInput.height, 'On Loss (%)', '');
+        this.onLossLabelInput = new CustomLabelInput(this.onWinLabelInput.x, this.onWinLabelInput.y + this.onWinLabelInput.height, 'On Loss (%)', '');
 
         // Label stop on gain or loss
         let betConfig = (this.betAmount.getInputAmount() as InputBetAmount).getBetConfig();
-        this.labelNetGain = new LabeledInput(this.onLoseLabelInput.x, this.onLoseLabelInput.y + this.onLoseLabelInput.height, 500, 30, 'Stop on Net Gain', '', new CustomInputStopAuto(betConfig));
+        this.labelNetGain = new LabeledInput(this.onLossLabelInput.x, this.onLossLabelInput.y + this.onLossLabelInput.height, 500, 30, 'Stop on Net Gain', '', new CustomInputStopAuto(betConfig));
         this.labelLoss = new LabeledInput(this.labelNetGain.x, this.labelNetGain.y + this.labelNetGain.height, 500, 30, 'Stop on Loss', '', new CustomInputStopAuto(betConfig));
 
         // Hide auto container when start game
@@ -84,7 +85,7 @@ export class AutoBetContainer extends BetContainer {
         this.startAutobet.position.set(this.labelLoss.width / 2, this.labelLoss.y + this.labelLoss.height + 50);
         this.startAutobet.onPress.connect(this.onStartAutobet.bind(this));
 
-        this.addChild(this.numberOfGames, this.onWinLabelInput, this.onLoseLabelInput, this.labelNetGain, this.labelLoss, this.startAutobet);
+        this.addChild(this.numberOfGames, this.onWinLabelInput, this.onLossLabelInput, this.labelNetGain, this.labelLoss, this.startAutobet);
     }
 
     private onItemPressed(buttonPressedCount: number) {
@@ -133,5 +134,23 @@ export class AutoBetContainer extends BetContainer {
 
         // Enable win container 
         globalEmitter.emit(WinContainerEvent.ENABLE, profitMultiplier, totalProfit);
+
+        if (this.onWinLabelInput.getCurrentPercent() !== 0) {
+            let currBetValue = Number(this.betAmount.getInputAmount().value);
+            let percentIncrease = this.onWinLabelInput.getCurrentPercent();
+            let newBetValue = currBetValue + currBetValue * (percentIncrease / 100);
+
+            this.betAmount.getInputAmount().value = String(newBetValue.toFixed(2));
+        }
+    }
+
+    private onAutoBetLoss() {
+        if (this.onLossLabelInput.getCurrentPercent() !== 0) {
+            let currBetValue = Number(this.betAmount.getInputAmount().value);
+            let percentIncrease = this.onLossLabelInput.getCurrentPercent();
+            let newBetValue = currBetValue + currBetValue * (percentIncrease / 100);
+
+            this.betAmount.getInputAmount().value = String(newBetValue.toFixed(2));
+        }
     }
 }

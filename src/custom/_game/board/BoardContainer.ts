@@ -201,8 +201,11 @@ export class BoardContainer extends Container {
         if (!this.isAuto) return;
         // console.log(this.diamondCount, this.mineCount);
 
-        // If loss do nothing
-        if (this.mineCount > 0) return;
+        // If loss notify for the UI update the bet value
+        if (this.mineCount > 0) {
+            globalEmitter.emit(AutoBettingEvent.ON_LOSS);
+            return;
+        }
 
         // If win send diamond count to auto bet container
         globalEmitter.emit(AutoBettingEvent.ON_WIN, this.diamondCount);

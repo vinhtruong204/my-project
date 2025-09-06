@@ -119,4 +119,8 @@ export class CustomLabelInput extends LabeledInput {
             this.interactiveChildren = true;
         }
     }
+
+    public getCurrentPercent(): number {
+        return Number(this.inputAmount.value);
+    }
 }
