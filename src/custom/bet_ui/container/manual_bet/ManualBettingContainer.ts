@@ -4,6 +4,7 @@ import { LabeledInput } from "../../base/LabeledInput";
 import { Button } from "../../../../app/ui/Button";
 import { globalEmitter } from "../../../events/GlobalEmitter";
 import { ManualBettingEvent } from "../../../events/manual_betting_events/ManualBettingEvent";
+import { ItemType } from "../../../_game/board/ItemType";
 
 const defaultInputFieldSize = {
     width: 350,
@@ -28,6 +29,8 @@ export class ManualBettingContainer extends Container {
 
     constructor(x: number, y: number) {
         super({ x: x, y: y });
+
+        globalEmitter.on(ManualBettingEvent.PRESSED_ITEM, this.onItemPressed.bind(this));
 
         this.minesCount = new LabeledInput(
             0,
@@ -79,10 +82,25 @@ export class ManualBettingContainer extends Container {
         this.cashoutButton.position.set(this.randomPickButton.x, this.randomPickButton.y + this.randomPickButton.height + 20);
         this.cashoutButton.onPress.connect(this.handleWithdrawButtonClicked.bind(this));
 
+        // Disable for the first time
+        this.cashoutButton.alpha = 0.5;
+        this.cashoutButton.interactive = false;
+
         this.addChild(this.minesCount, this.diamondRemain, this.totalProfit, this.randomPickButton, this.cashoutButton);
 
         // Disable when the game start
         this.visible = false;
+    }
+
+    private onItemPressed(itemType: ItemType) {
+        if (itemType === ItemType.DIAMOND) {
+            this.cashoutButton.alpha = 1;
+            this.cashoutButton.interactive = true;
+        }
+        else if (itemType === ItemType.MINE) {
+            this.cashoutButton.alpha = 0.5;
+            this.cashoutButton.interactive = false;
+        }
     }
 
     private getBackgroundOfInput(isFullWidth: boolean) {

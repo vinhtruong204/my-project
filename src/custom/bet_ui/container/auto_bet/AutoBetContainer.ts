@@ -40,6 +40,9 @@ export class AutoBetContainer extends BetContainer {
         // Register win listener when auto betting
         globalEmitter.on(AutoBettingEvent.ON_WIN, this.onAutoBetWin.bind(this));
 
+        // Only allow start auto
+        globalEmitter.on(AutoBettingEvent.PRESSED_ITEM, this.onItemPressed.bind(this));
+
         // Input number of games Autobet
         this.inputNumberOfGames = new InputNumberOfGames();
         this.inputNumberOfGames.onTypeRequestValueChange = this.onValueChange.bind(this);
@@ -72,13 +75,26 @@ export class AutoBetContainer extends BetContainer {
             text: "Start Autobet",
             width: defaultButtonSize.width,
             height: defaultButtonSize.height,
-            fontSize: 40
+            fontSize: 40,
         });
+
+        this.startAutobet.alpha = 0.5;
+        this.startAutobet.interactive = false;
         this.startAutobet.anchor.set(0.5, 0.5);
         this.startAutobet.position.set(this.labelLoss.width / 2, this.labelLoss.y + this.labelLoss.height + 50);
         this.startAutobet.onPress.connect(this.onStartAutobet.bind(this));
 
         this.addChild(this.numberOfGames, this.onWinLabelInput, this.onLoseLabelInput, this.labelNetGain, this.labelLoss, this.startAutobet);
+    }
+
+    private onItemPressed(buttonPressedCount: number) {
+        if (buttonPressedCount <= 0) {
+            this.startAutobet.interactive = false;
+            this.startAutobet.alpha = 0.5;
+        } else {
+            this.startAutobet.alpha = 1;
+            this.startAutobet.interactive = true;
+        }
     }
 
     private onValueChange(value: string) {

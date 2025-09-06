@@ -18,6 +18,7 @@ import { WinContainerEvent } from "../../events/WinContainerEvent";
 export class BoardContainer extends Container {
     private buttonSize: number = 0;
     private buttons: Button[][] = [];
+    private buttonPressedAutoCount: number = 0;
 
     // Variables for the auto
     private isAuto: boolean = false;
@@ -119,10 +120,14 @@ export class BoardContainer extends Container {
         if (!btn.pressed) {
             btn.pressed = true;
             btn.alpha = 0.75;
+            this.buttonPressedAutoCount++;
         } else {
             btn.pressed = false;
             btn.alpha = 1;
+            this.buttonPressedAutoCount--;
         }
+
+        globalEmitter.emit(AutoBettingEvent.PRESSED_ITEM, this.buttonPressedAutoCount);
     }
 
     private onGameStateChange(state: GameState, mines: number, numberOfGames: number = -1) {
@@ -193,7 +198,8 @@ export class BoardContainer extends Container {
     }
 
     private checkGameResult() {
-        console.log(this.diamondCount, this.mineCount);
+        if (!this.isAuto) return;
+        // console.log(this.diamondCount, this.mineCount);
 
         // If loss do nothing
         if (this.mineCount > 0) return;
@@ -280,6 +286,8 @@ export class BoardContainer extends Container {
     private onAutoModeStart() {
         this.isAuto = true;
 
+        this.buttonPressedAutoCount = 0;
+
         // Reset the board
         this.resetAllButtons(true);
     }
@@ -288,5 +296,8 @@ export class BoardContainer extends Container {
         this.isAuto = false;
 
         this.resetAllButtons();
+
+        // Reset button press count
+        this.buttonPressedAutoCount = 0;
     }
 }
