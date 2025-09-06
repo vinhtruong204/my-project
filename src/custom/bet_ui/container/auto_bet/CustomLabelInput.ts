@@ -4,7 +4,7 @@ import { LabeledInput } from "../../base/LabeledInput";
 import { Button } from "../../../../app/ui/Button";
 import { TriangleType } from "../../base/TriangleSprite";
 import { globalEmitter } from "../../../events/GlobalEmitter";
-import { GameStateEvent } from "../../../events/GameStateEvent";
+import { GameStateEvent } from "../../../events/game_states/GameStateEvent";
 import { GameState } from "../../../_game/manage_game_states/GameState";
 
 const defaultInputFieldSize = {

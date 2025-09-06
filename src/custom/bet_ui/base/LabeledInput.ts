@@ -1,7 +1,7 @@
 import { Container, Text } from "pixi.js";
 import { CustomInputBase } from "./CustomInputBase";
 import { globalEmitter } from "../../events/GlobalEmitter";
-import { GameStateEvent } from "../../events/GameStateEvent";
+import { GameStateEvent } from "../../events/game_states/GameStateEvent";
 import { GameState } from "../../_game/manage_game_states/GameState";
 
 //**This class contain input field and label text */
@@ -76,5 +76,9 @@ export class LabeledInput extends Container {
             this.interactive = true;
             this.interactiveChildren = true;
         }
+    }
+
+    public setLeftLabelText(text: string) {
+        this.leftLabel.text = text;
     }
 }

@@ -1,4 +1,4 @@
-import { GameStateEvent } from "../../events/GameStateEvent";
+import { GameStateEvent } from "../../events/game_states/GameStateEvent";
 import { globalEmitter } from "../../events/GlobalEmitter";
 import { GameState } from "./GameState";
 

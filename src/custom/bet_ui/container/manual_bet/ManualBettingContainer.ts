@@ -2,6 +2,8 @@ import { Container, Graphics } from "pixi.js";
 import { CustomInputBase } from "../../base/CustomInputBase";
 import { LabeledInput } from "../../base/LabeledInput";
 import { Button } from "../../../../app/ui/Button";
+import { globalEmitter } from "../../../events/GlobalEmitter";
+import { ManualBettingEvent } from "../../../events/manual_betting_events/ManualBettingEvent";
 
 const defaultInputFieldSize = {
     width: 350,
@@ -64,6 +66,7 @@ export class ManualBettingContainer extends Container {
         });
         this.randomPickButton.anchor.set(0, 0);
         this.randomPickButton.position.set(this.totalProfit.x, this.totalProfit.y + this.totalProfit.height + 20);
+        this.randomPickButton.onPress.connect(this.onRandomPickClicked.bind(this));
 
         // Withdraw button
         this.cashoutButton = new Button({
@@ -96,14 +99,23 @@ export class ManualBettingContainer extends Container {
         return customInputBase;
     }
 
-    public setGameConfig(minesCount: number | null, diamondRemain: number, totalProfit: number) {
+    public setGameConfig(minesCount: number | null, diamondRemain: number, totalProfit: number, coefficient: number = 0) {
         this.minesCount.setInputAmountText(String(minesCount ? minesCount : this.minesCount.getInputAmount().value));
         this.diamondRemain.setInputAmountText(String(diamondRemain));
         this.totalProfit.setInputAmountText(String(totalProfit.toFixed(2)));
+
+        // Update or reset total profit text
+        if (coefficient !== 0) this.totalProfit.setLeftLabelText(`Total profit (${coefficient.toFixed(2)}x)`);
+        else this.totalProfit.setLeftLabelText('Total profit (1.00x)');
     }
 
     private handleWithdrawButtonClicked() {
         // Container betting progress notice completed
         this.onBettingCompleted?.();
+    }
+
+    private onRandomPickClicked() {
+        // Raise event when random button clicked
+        globalEmitter.emit(ManualBettingEvent.PICK_RANDOM);
     }
 }

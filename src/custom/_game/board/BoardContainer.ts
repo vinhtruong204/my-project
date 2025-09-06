@@ -6,8 +6,9 @@ import { ItemType } from "./ItemType";
 import { GetItem } from "../get_data/GetItem";
 import { GameStateManager } from "../manage_game_states/GameStateManager";
 import { globalEmitter } from "../../events/GlobalEmitter";
-import { GameStateEvent } from "../../events/GameStateEvent";
+import { GameStateEvent } from "../../events/game_states/GameStateEvent";
 import { GameState } from "../manage_game_states/GameState";
+import { ManualBettingEvent } from "../../events/manual_betting_events/ManualBettingEvent";
 
 export class BoardContainer extends Container {
     private buttonSize: number = 0;
@@ -17,6 +18,7 @@ export class BoardContainer extends Container {
         super({ x: x, y: y });
 
         globalEmitter.on(GameStateEvent.STATE_CHANGE, this.onGameStateChange.bind(this));
+        globalEmitter.on(ManualBettingEvent.PICK_RANDOM, this.onPickRandom.bind(this));
 
         this.initBoard();
     }
@@ -34,7 +36,11 @@ export class BoardContainer extends Container {
             const columnContainer = new Container({ x: i * this.buttonSize, y: 0 });
             for (let j = 0; j < columns; j++) {
                 const button = new Button({ width: this.buttonSize, height: this.buttonSize });
+
+                // Adjust the position
                 button.y = j * this.buttonSize;
+
+                // Handle onclick event
                 button.onPress.connect(() => this.onPress(button, i, j));
 
                 columnContainer.addChild(button);
@@ -48,7 +54,13 @@ export class BoardContainer extends Container {
         if (!GameStateManager.getInstance().isBetting()) return;
         if (btn.pressed) return;
 
-        if (await GetItem.getItemType(i, j) === ItemType.DIAMOND)
+        let itemType = await GetItem.getItemType(i, j);
+
+        // Raise event to update UI
+        globalEmitter.emit(ManualBettingEvent.PRESSED_ITEM, itemType);
+
+        // Update default view
+        if (itemType === ItemType.DIAMOND)
             btn.defaultView = this.getButtonView("diamond.png");
         else {
             btn.defaultView = this.getButtonView("bomb.png");
@@ -81,6 +93,7 @@ export class BoardContainer extends Container {
         for (let i = 0; i < this.buttons.length; i++) {
             for (let j = 0; j < this.buttons[i].length; j++) {
                 let sprite = this.getButtonView("button.png");
+                sprite.setSize(this.buttons[i][j].width, this.buttons[i][j].height);
 
                 this.buttons[i][j].pressed = false;
                 this.buttons[i][j].alpha = 1;
@@ -104,7 +117,31 @@ export class BoardContainer extends Container {
 
     private getButtonView(path: string): Sprite {
         let sprite = Sprite.from(path);
+        sprite.anchor = 0.5;
         sprite.setSize(this.buttonSize, this.buttonSize);
         return sprite;
     }
+
+    private async onPickRandom() {
+        const available: { btn: Button; i: number; j: number }[] = [];
+
+        for (let i = 0; i < this.buttons.length; i++) {
+            for (let j = 0; j < this.buttons[i].length; j++) {
+                const btn = this.buttons[i][j];
+                if (!btn.pressed) {
+                    available.push({ btn, i, j });
+                }
+            }
+        }
+
+        if (available.length === 0) return;
+
+        // Random one button
+        const randomIndex = Math.floor(Math.random() * available.length);
+        const { btn, i, j } = available[randomIndex];
+
+        // Call onpress to handle random button clicked
+        this.onPress(btn, i, j);
+    }
+
 }

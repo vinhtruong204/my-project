@@ -1,15 +1,22 @@
 import { GlobalConfig } from "../../../../app/config/GlobalConfig";
 import { Button } from "../../../../app/ui/Button";
+import { ItemType } from "../../../_game/board/ItemType";
 import { GameState } from "../../../_game/manage_game_states/GameState";
 import { GameStateManager } from "../../../_game/manage_game_states/GameStateManager";
-import { GameStateEvent } from "../../../events/GameStateEvent";
+import { GameStateEvent } from "../../../events/game_states/GameStateEvent";
 import { globalEmitter } from "../../../events/GlobalEmitter";
+import { ManualBettingEvent } from "../../../events/manual_betting_events/ManualBettingEvent";
 import { BetContainer } from "../BetContainer";
 import { ManualBettingContainer } from "./ManualBettingContainer";
 
 export class ManualBetContainer extends BetContainer {
 
     private manualBettingContainer: ManualBettingContainer;
+    private diamondRemain: number = 0;
+    private diamondCollected: number = 0;
+
+    // Increase per time when player press a diamond(depend on number of mines)
+    private coefficientPerTime: number = 0;
 
     private betButton: Button;
 
@@ -18,6 +25,9 @@ export class ManualBetContainer extends BetContainer {
 
         // Register callback when user click a mine 
         globalEmitter.on(GameStateEvent.STATE_CHANGE, this.onGameStateChange.bind(this));
+
+        // Register listener to handle item pressed event
+        globalEmitter.on(ManualBettingEvent.PRESSED_ITEM, this.onItemPressed.bind(this));
 
         this.manualBettingContainer = new ManualBettingContainer(this.selectMines.x, this.selectMines.y);
 
@@ -45,6 +55,13 @@ export class ManualBetContainer extends BetContainer {
 
         // Emit event to generate the board
         globalEmitter.emit(GameStateEvent.STATE_CHANGE, GameState.BETTING, this.selectMines.value + 1);
+
+        // Initialize diamond count
+        this.diamondRemain = GlobalConfig.TOTAL_COLUMNS * GlobalConfig.TOTAL_ROWS - (this.selectMines.value + 1);
+        this.diamondCollected = 0;
+
+        // Initialize coefficient per time
+        this.coefficientPerTime = (this.selectMines.value + 1) / 10;
     }
 
     private onBettingCompleted() {
@@ -78,6 +95,19 @@ export class ManualBetContainer extends BetContainer {
 
             this.selectMines.visible = false;
             this.betButton.visible = false;
+        }
+    }
+
+    private onItemPressed(itemType: ItemType) {
+        if (itemType === ItemType.DIAMOND) {
+            this.diamondCollected++;
+
+            let coefficient = 1 + this.diamondCollected * this.coefficientPerTime;
+            let totalProfit = Number(this.betAmount.getInputAmount().value) * coefficient;
+
+            this.manualBettingContainer.setGameConfig(null, --this.diamondRemain, totalProfit, coefficient);
+        } else if (itemType === ItemType.MINE) {
+            this.manualBettingContainer.setGameConfig(null, this.diamondRemain, 0);
         }
     }
 }

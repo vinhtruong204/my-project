@@ -3,7 +3,7 @@ import { CustomInputBase } from "../../base/CustomInputBase";
 import { TriangleType } from "../../base/TriangleSprite";
 import { globalEmitter } from "../../../events/GlobalEmitter";
 import { GameState } from "../../../_game/manage_game_states/GameState";
-import { GameStateEvent } from "../../../events/GameStateEvent";
+import { GameStateEvent } from "../../../events/game_states/GameStateEvent";
 
 const MAX_NUMBER_OF_GAMES = 999999999;
 

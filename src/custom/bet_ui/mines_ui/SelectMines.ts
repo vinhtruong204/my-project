@@ -1,7 +1,7 @@
 import { Select } from "@pixi/ui";
 import { Sprite, Text } from "pixi.js";
 import { GameState } from "../../_game/manage_game_states/GameState";
-import { GameStateEvent } from "../../events/GameStateEvent";
+import { GameStateEvent } from "../../events/game_states/GameStateEvent";
 import { globalEmitter } from "../../events/GlobalEmitter";
 
 const items: string[] = [
