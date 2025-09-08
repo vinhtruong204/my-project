@@ -9,6 +9,8 @@ export class GetNumberOfMines {
                 return 10;
             case GameMode.HARD:
                 return 15;
+            case GameMode.INSANE:
+                return 24;
             default:
                 return 0;
         }

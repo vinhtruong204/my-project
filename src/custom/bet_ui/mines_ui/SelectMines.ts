@@ -13,8 +13,8 @@ import { globalEmitter } from "../../events/GlobalEmitter";
 // ];
 
 const modes: string[] = [
-    "Easy", "Medium", "Hard"
-    // 5, 10, 15
+    "Easy", "Medium", "Hard", "Insane"
+    // 5, 10, 15, 24
 ]
 
 const defaultSizeSelectSprite = { width: 500, height: 70 };
