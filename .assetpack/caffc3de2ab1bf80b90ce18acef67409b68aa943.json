@@ -6,8 +6,8 @@
             "inheritedMetaData": {},
             "transformData": {},
             "stats": {
-                "date": 1757082620560,
-                "duration": 2.9521999999997206,
+                "date": 1757302275153,
+                "duration": 1.2602999999999156,
                 "success": true
             }
         },
@@ -20,8 +20,8 @@
             "inheritedMetaData": {},
             "transformData": {},
             "stats": {
-                "date": 1757082620560,
-                "duration": 4.3901999999998225,
+                "date": 1757302275153,
+                "duration": 1.8594999999986612,
                 "success": true
             }
         },
@@ -34,11 +34,11 @@
             },
             "transformData": {},
             "stats": {
-                "date": 1757082620560,
-                "duration": 4.458700000001045,
+                "date": 1757302275153,
+                "duration": 1.8958000000002357,
                 "success": true
             },
-            "hash": "FX9EmA"
+            "hash": "Wq9lMw"
         },
         "D:/Work/my-project/public/assets/main/logo-white.svg": {
             "isFolder": false,
@@ -575,8 +575,8 @@
             "inheritedMetaData": {},
             "transformData": {},
             "stats": {
-                "date": 1757082620562,
-                "duration": 3.1190999999998894,
+                "date": 1757302275153,
+                "duration": 1.3039000000007945,
                 "success": true
             }
         },
@@ -1114,11 +1114,11 @@
             },
             "transformData": {},
             "stats": {
-                "date": 1757082620562,
-                "duration": 3.1260999999994965,
+                "date": 1757302275153,
+                "duration": 1.3040000000000873,
                 "success": true
             },
-            "hash": "Uo_wSQ"
+            "hash": "LmftHw"
         },
         "D:/Work/my-project/public/assets/preload/logo.svg": {
             "isFolder": false,

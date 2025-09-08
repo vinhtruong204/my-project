@@ -11,6 +11,8 @@ import { globalEmitter } from "../../../events/GlobalEmitter";
 import { GameStateEvent } from "../../../events/game_states/GameStateEvent";
 import { AutoBettingEvent } from "../../../events/auto_betting_events/AutoBettingEvent";
 import { WinContainerEvent } from "../../../events/WinContainerEvent";
+import { GetNumberOfMines } from "../../../get_data/GetNumberOfMines";
+import { GameMode } from "../../mines_ui/GameMode";
 
 const MAX_NUMBER_OF_GAMES = 999999999;
 
@@ -108,15 +110,17 @@ export class AutoBetContainer extends BetContainer {
     }
 
     private onStartAutobet() {
+        const mineCount = GetNumberOfMines.getNumberOfMines(this.selectMines.value as GameMode);
+        
         if (this.startAutobet.text === 'Start Autobet') {
             GameStateManager.getInstance().setState(GameState.BETTING);
             globalEmitter.emit(GameStateEvent.STATE_CHANGE,
                 GameState.BETTING,
-                this.selectMines.value + 1,
+                mineCount,
                 Number(this.numberOfGames.getInputAmount().value));
 
             // Calculate profit pertime
-            this.profitMultiplierPerTime = (this.selectMines.value + 1) / 10;
+            this.profitMultiplierPerTime = mineCount / 10;
 
             // Reset net gain and loss value
             this.totalNetGain = 0;

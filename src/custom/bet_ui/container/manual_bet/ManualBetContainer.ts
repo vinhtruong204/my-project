@@ -7,6 +7,8 @@ import { GameStateEvent } from "../../../events/game_states/GameStateEvent";
 import { globalEmitter } from "../../../events/GlobalEmitter";
 import { ManualBettingEvent } from "../../../events/manual_betting_events/ManualBettingEvent";
 import { WinContainerEvent } from "../../../events/WinContainerEvent";
+import { GetNumberOfMines } from "../../../get_data/GetNumberOfMines";
+import { GameMode } from "../../mines_ui/GameMode";
 import { BetContainer } from "../BetContainer";
 import { ManualBettingContainer } from "./ManualBettingContainer";
 
@@ -52,20 +54,21 @@ export class ManualBetContainer extends BetContainer {
     }
 
     private onBetButtonClicked() {
+        const mineCount = GetNumberOfMines.getNumberOfMines(this.selectMines.value as GameMode)
         GameStateManager.getInstance().setState(GameState.BETTING);
 
         // Emit event to generate the board
-        globalEmitter.emit(GameStateEvent.STATE_CHANGE, GameState.BETTING, this.selectMines.value + 1);
+        globalEmitter.emit(GameStateEvent.STATE_CHANGE, GameState.BETTING, mineCount);
 
         // Emit event to disable win container
         globalEmitter.emit(WinContainerEvent.DIASABLE);
 
         // Initialize diamond count
-        this.diamondRemain = GlobalConfig.TOTAL_COLUMNS * GlobalConfig.TOTAL_ROWS - (this.selectMines.value + 1);
+        this.diamondRemain = GlobalConfig.TOTAL_COLUMNS * GlobalConfig.TOTAL_ROWS - (mineCount);
         this.diamondCollected = 0;
 
         // Initialize profitMultiplier per time
-        this.profitMultiplierPerTime = (this.selectMines.value + 1) / 10;
+        this.profitMultiplierPerTime = (mineCount) / 10;
     }
 
     private onBettingCompleted() {
@@ -81,13 +84,9 @@ export class ManualBetContainer extends BetContainer {
     }
 
     private updateUI(isBetCompleted: boolean) {
+        const mineCount = GetNumberOfMines.getNumberOfMines(this.selectMines.value as GameMode)
         if (isBetCompleted) {
             this.manualBettingContainer.visible = false;
-            // this.manualBettingContainer.setGameConfig(
-            //     this.selectMines.value + 1,
-            //     GlobalConfig.TOTAL_COLUMNS * GlobalConfig.TOTAL_ROWS - (this.selectMines.value + 1),
-            //     Number(this.betAmount.getInputAmount().value),
-            // );
 
             this.selectMines.visible = true;
             this.betButton.visible = true;
@@ -95,8 +94,8 @@ export class ManualBetContainer extends BetContainer {
         else {
             this.manualBettingContainer.visible = true;
             this.manualBettingContainer.setGameConfig(
-                this.selectMines.value + 1,
-                GlobalConfig.TOTAL_COLUMNS * GlobalConfig.TOTAL_ROWS - (this.selectMines.value + 1),
+                mineCount,
+                GlobalConfig.TOTAL_COLUMNS * GlobalConfig.TOTAL_ROWS - mineCount,
                 Number(this.betAmount.getInputAmount().value),
             );
 

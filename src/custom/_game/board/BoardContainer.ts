@@ -3,7 +3,7 @@ import { GlobalConfig } from "../../../app/config/GlobalConfig";
 import { Button } from "../../../app/ui/Button";
 import { engine } from "../../../app/getEngine";
 import { ItemType } from "./ItemType";
-import { GetItem } from "../get_data/GetItem";
+import { GetItem } from "../../get_data/GetItem";
 import { GameStateManager } from "../manage_game_states/GameStateManager";
 import { globalEmitter } from "../../events/GlobalEmitter";
 import { GameStateEvent } from "../../events/game_states/GameStateEvent";
@@ -248,7 +248,7 @@ export class BoardContainer extends Container {
                         this.mineCount++;
                     }
                 }
-                this.buttons[i][j].alpha = this.buttons[i][j].pressed ? 1 : 0.15;
+                this.buttons[i][j].alpha = this.buttons[i][j].pressed ? 1 : 0.35;
             }
         }
 

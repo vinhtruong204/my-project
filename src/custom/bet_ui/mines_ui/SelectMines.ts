@@ -4,13 +4,18 @@ import { GameState } from "../../_game/manage_game_states/GameState";
 import { GameStateEvent } from "../../events/game_states/GameStateEvent";
 import { globalEmitter } from "../../events/GlobalEmitter";
 
-const items: string[] = [
-    "1", "2", "3", "4", "5",
-    "6", "7", "8", "9", "10",
-    "11", "12", "13", "14", "15",
-    "16", "17", "18", "19", "20",
-    "21", "22", "23", "24",
-];
+// const items: string[] = [
+//     "1", "2", "3", "4", "5",
+//     "6", "7", "8", "9", "10",
+//     "11", "12", "13", "14", "15",
+//     "16", "17", "18", "19", "20",
+//     "21", "22", "23", "24",
+// ];
+
+const modes: string[] = [
+    "Easy", "Medium", "Hard"
+    // 5, 10, 15
+]
 
 const defaultSizeSelectSprite = { width: 500, height: 70 };
 
@@ -29,9 +34,9 @@ export class SelectMines extends Select {
         super({
             closedBG: makeBGSprite('select.png'),
             openBG: makeBGSprite('select.png'),
-            textStyle: { fill: 0x000000, fontSize: 36, align: 'left' },
+            textStyle: { fill: 0x000000, fontSize: 32, align: 'left' },
             items: {
-                items: items,
+                items: modes,
                 backgroundColor: 0xffffff,
                 hoverColor: 0xffffff,
                 width: 500,
@@ -50,7 +55,7 @@ export class SelectMines extends Select {
         this.zIndex = 10;
 
         this.leftLabel = new Text({
-            text: 'Mines',
+            text: 'Select mode',
             style: {
                 fontFamily: 'Arial',
                 fontSize: 40,
